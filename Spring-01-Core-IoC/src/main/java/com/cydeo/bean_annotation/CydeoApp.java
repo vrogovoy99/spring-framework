@@ -8,6 +8,7 @@ public class CydeoApp {
 
         ApplicationContext container = new AnnotationConfigApplicationContext(ConfigApp.class, ConfigApp2.class);
 
+        System.out.println("____________________\nStarting app");
         FullTimeMentor ft = container.getBean("freshMentor", FullTimeMentor.class);
         PartTimeMentor pt = container.getBean(PartTimeMentor.class);
         String string=container.getBean(String.class);

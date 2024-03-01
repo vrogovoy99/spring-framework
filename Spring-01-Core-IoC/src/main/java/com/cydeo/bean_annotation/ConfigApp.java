@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Primary;
 public class ConfigApp {
     @Bean(name = "freshMentor")
     FullTimeMentor fullTimeMentor(){
+        System.out.println("freshMentor bean is created");
         return new FullTimeMentor();
     }
     @Bean(name = "seniorMentor")
     FullTimeMentor fullTimeMentor2(){
+        System.out.println("seniorMentor bean is created");
         FullTimeMentor ff = new FullTimeMentor();
         ff.setStatus("Senior Mentor");
         return ff;
