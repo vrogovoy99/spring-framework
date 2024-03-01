@@ -5,9 +5,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ConfigApp {
-    @Bean
+    @Bean(name = "freshMentor")
     FullTimeMentor fullTimeMentor(){
         return new FullTimeMentor();
+    }
+    @Bean(name = "seniorMentor")
+    FullTimeMentor fullTimeMentor2(){
+        FullTimeMentor ff = new FullTimeMentor();
+        ff.setStatus("Senior Mentor");
+        return ff;
     }
 
     @Bean
