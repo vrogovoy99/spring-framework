@@ -1,7 +1,9 @@
 package com.cydeo.bean_annotation;
 
+import lombok.Builder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class ConfigApp {
@@ -17,7 +19,16 @@ public class ConfigApp {
     }
 
     @Bean
+    @Primary
     PartTimeMentor partTimeMentor(){
-        return new PartTimeMentor();
+        PartTimeMentor pt= new PartTimeMentor();
+        pt.setRate(50);
+        return pt;
+    }
+    @Bean(name = "prime")
+    PartTimeMentor partTimeMentor2(){
+        PartTimeMentor pt= new PartTimeMentor();
+        pt.setRate(123);
+        return pt;
     }
 }

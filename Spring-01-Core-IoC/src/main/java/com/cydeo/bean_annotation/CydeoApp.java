@@ -19,7 +19,7 @@ public class CydeoApp {
 
         System.out.println(string + " " + ft.getX() + " " + ft.getStatus());
 
-//        Same bean being reused.
+// Same bean being reused.
         FullTimeMentor ft2 = container.getBean("seniorMentor", FullTimeMentor.class);
 
         // beans based on the same class share common class variable (x) but diferentiate bean set property Status
@@ -27,6 +27,10 @@ public class CydeoApp {
         System.out.println("________________\nft1 = " + ft.getX() + "; ft2 = " +ft.getX());
         System.out.println("ft1 status " + ft.getStatus());
         System.out.println("ft2 status " + ft2.getStatus());
+// primary bean output
+        System.out.println("________________\nPart time primary rate is " + pt.getRate());
+        PartTimeMentor pt2 = container.getBean("prime", PartTimeMentor.class);
+        System.out.println("Prime part time rate is " + pt2.getRate());
 
 
 
