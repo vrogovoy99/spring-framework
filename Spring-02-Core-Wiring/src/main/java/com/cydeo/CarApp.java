@@ -13,5 +13,9 @@ public class CarApp {
         // wired class
         Person pWired = container.getBean("wired", Person.class);
         System.out.println("Person " + pWired.getName() + " drives " + pWired.getCar().getMake());
+
+        // autowiring
+        Person pAW = container.getBean("autoWired", Person.class);
+        System.out.println("Person " + pAW.getName() + " drives " + pAW.getCar().getMake());
     }
 }
