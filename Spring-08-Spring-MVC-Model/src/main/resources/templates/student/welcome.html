@@ -6,12 +6,23 @@
 </head>
 <body>
 <h1>Student welcome page</h1>
+<h2 th:text="${studentID}">Welcome student </h2>
 <br>
-go <a href="/">home</a>
+go general <a href="/">welcome</a> page.
 <p></p>
-This is
-<b th:text="${name}"></b>
-<b th:text="${course}"></b>
+
+<table>
+    <tr><td>name</td><td th:text="${name}"></td></tr>
+    <tr><td>course</td><td th:text="${course}"></td></tr>
+    <tr><td>subject</td><td th:text="${subject}"></td></tr>
+    <tr><td>studentid + 1</td><td th:text="${studentID+1}"></td></tr>
+    <tr><td>list</td><td th:text="${numbers}"></td></tr>
+    <tr><td>list first element</td><td th:text="${numbers[0]}"></td></tr>
+    <tr><td>Student first name</td><td th:text="${student.getFistName()}"></td></tr>
+    <tr><td>Student last name</td><td th:text="${student.getLastName()}"></td></tr>
+    <tr><td></td><td></td></tr>
+
+</table>
 
 </body>
 </html>
