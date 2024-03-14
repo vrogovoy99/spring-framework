@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mentor Title</title>
+</head>
+<body>
+<h1>Welcome Mentor page</h1>
+go general <a href="/">welcome</a> page.
+
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+    </tr>
+    <span th:each="mentor : ${mentorList}">
+        <tr>
+            <td th:text="${mentor.getFirstName()}"></td>
+            <td th:text="${mentor.getLastName()}"></td>
+            <td th:text="${mentor.getAge()}"></td>
+            <td th:text="${mentor.getGender()}"></td>
+        </tr>
+    </span>
+</table>
+
+</body>
+</html>

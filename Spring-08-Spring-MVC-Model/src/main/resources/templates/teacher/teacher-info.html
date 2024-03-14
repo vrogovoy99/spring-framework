@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Info</title>
+</head>
+<body>
+
+<h1>Teacher info page</h1>
+go general <a href="/">welcome</a> page.
+<h2>This is teacher info</h2>
+<table>
+    <tr><td>Subject</td><td th:text="${subject}"></td> </tr>
+    <tr><td>Experience</td><td th:text="${experience}"></td> </tr>
+</table>
+<form action="/teacher/teacher-info" method="get">
+    new subject
+    <input type="text" name="subject" >
+    <br>
+    new experience
+    <input type="text" name="experience">
+    <br>
+    <input type="submit">
+</form>
+</body>
+</html>

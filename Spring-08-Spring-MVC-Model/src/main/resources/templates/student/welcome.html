@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student welcome page</title>
+</head>
+<body>
+<h1>Student welcome page</h1>
+<h2 th:text="${studentID}">Welcome student </h2>
+<br>
+go general <a href="/">welcome</a> page.
+<p></p>
+
+<table>
+    <tr><td>name</td><td th:text="${name}"></td></tr>
+    <tr><td>course</td><td th:text="${course}"></td></tr>
+    <tr><td>subject</td><td th:text="${subject}"></td></tr>
+    <tr><td>studentid + 1</td><td th:text="${studentID+1}"></td></tr>
+    <tr><td>list</td><td th:text="${numbers}"></td></tr>
+    <tr><td>list first element</td><td th:text="${numbers[0]}"></td></tr>
+    <tr><td>Student first name</td><td th:text="${student.getFistName()}"></td></tr>
+    <tr><td>Student last name</td><td th:text="${student.getLastName()}"></td></tr>
+    <tr><td></td><td></td></tr>
+
+</table>
+
+</body>
+</html>
