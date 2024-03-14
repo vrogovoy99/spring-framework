@@ -23,7 +23,7 @@ public class TeacherController {
     //example of path variable
     @RequestMapping("/teacher-info/{subject}/{experience}") //localhost:8080/teacher/teacher-info/history/200
     public String teacherInfoParam(@PathVariable(value = "subject", required = false) String subject,
-                              @PathVariable Integer experience,
+                              @PathVariable(value = "experience", required = false) Integer experience,
                               Model model){
 
         model.addAttribute("subject", subject);
