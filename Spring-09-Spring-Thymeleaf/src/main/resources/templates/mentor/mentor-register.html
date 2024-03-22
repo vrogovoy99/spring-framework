@@ -8,7 +8,7 @@
 
 <div align="center">
 <table ><tr><td align="left">
-<form th:object="${mentor}" >
+<form th:object="${mentor}" th:action="@{/mentor/confirm}" method="post">
 
     <label>First Name:</label>
     <input type="text" id="FirstName" th:field="*{firstName}"><br>
