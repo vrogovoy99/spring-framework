@@ -1,0 +1,5 @@
+get bootsraps from https://getbootstrap.com/docs/4.0/getting-started/introduction/
+
+copy starter template to html page (employee-create.html)
+
+in left navigation search box, search for forms. pick the form that you need and copy code to your html page
