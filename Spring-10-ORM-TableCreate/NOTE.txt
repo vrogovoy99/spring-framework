@@ -1,0 +1,35 @@
+1. create project with following dependencies:
+
+        spring-boot-starter-data-jpa
+        spring-boot-starter-web
+        h2
+        postgresql
+        lombok
+
+2. put database connection in resources/application.properties file
+
+        spring.datasource.url=jdbc:h2:mem:testdb
+        spring.datasource.username=sa
+        spring.datasource.password=
+        #
+        spring.datasource.driver-class-name=org.h2.Driver
+        spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+        spring.jpa.show-sql=true
+        spring.h2.console.path=/h2-console
+        spring.h2.console.enabled=true
+
+
+        spring.jpa.hibernate.ddl-auto=create
+                create - drop existing table and create new
+                update - adjust schema if needed
+                validate - validate schema and raise error if it does not match.
+
+
+
+3. resources/schema.sql.onHold and resources/data.sql auto executes on application start.
+
+4. create entity/classes for java objects/database tables
+
+        @Entity - map this class to a table in database
+        @Id - use this field as primary key in a table.
