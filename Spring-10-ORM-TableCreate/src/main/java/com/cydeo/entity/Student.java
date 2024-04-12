@@ -27,6 +27,7 @@ public class Student {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDate birthDateTime;
 
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
