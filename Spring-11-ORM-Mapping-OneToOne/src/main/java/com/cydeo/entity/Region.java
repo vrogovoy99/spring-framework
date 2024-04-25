@@ -13,6 +13,8 @@ public class Region extends BaseEntity {
     private String region;
     @Column(columnDefinition = "varchar(20)")
     private String country;
+    @OneToOne(mappedBy = "region")
+    private Employee employee;
 
 
     public Region(String region, String country) {
