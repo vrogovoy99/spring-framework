@@ -5,6 +5,8 @@ import com.cydeo.repository.CarRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DataGenerator implements CommandLineRunner {
 
@@ -25,5 +27,7 @@ public class DataGenerator implements CommandLineRunner {
         carRepository.save(c1);
         carRepository.save(c2);
         carRepository.save(c3);
+
+
     }
 }

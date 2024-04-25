@@ -32,4 +32,12 @@
 4. create entity/classes for java objects/database tables
 
         @Entity - map this class to a table in database
+        @Table(name="altTableName") - create table in database
         @Id - use this field as primary key in a table.
+        @GeneratedValue(strategy = GenerationType.IDENTITY)  - have database to create keys for the table
+        @Column(name = "studentLastName") - different column name in database
+        @Transient  - exclude this field from the database table
+        @Column(columnDefinition = "DATE") - define datatype in database
+            @Column(columnDefinition = "TIME")
+            @Column(columnDefinition = "TIMESTAMP")
+        @Enumerated(EnumType.STRING) - use string instead of int for enum fields
