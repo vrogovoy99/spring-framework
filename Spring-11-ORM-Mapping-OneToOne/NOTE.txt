@@ -18,11 +18,14 @@
         extends BaseEntity
         @Column(columnDefinition = "varchar(100)")
         MAPPING OneToOne Bydirectional OBJECTS:
-            @OneToOne
+            @OneToOne(cascade = CascadeType.ALL) // cascade will ensure that related objects are populated in database
+                                CascadeType.PERSIST - during save operations
+                                CascadeType.REMOVE - during delete operations
                 @JoinColumn(name = "departmentId") //change the name of the join column
                 private Department department;
-            OR
+            And the other class:
                 @OneToOne(mappedBy = "department") //mappedBy name has to be the same name as other object is mapped to this class.
+                private Employee employee;
 - repository
     Each Class will get ClassRepository interface with extends JpaRepository<Class, Key>
 

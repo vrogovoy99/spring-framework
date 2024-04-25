@@ -25,7 +25,7 @@ public class Employee extends BaseEntity{
     private Gender gender;
     private  int salary;
 //    public int region_id;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "departmentId") //change the name of the join column
     private Department department;
 
