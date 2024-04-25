@@ -8,12 +8,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "regions")
 @Data
 @NoArgsConstructor
-public class Region {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int region_id;
+public class Region extends BaseEntity {
     @Column(columnDefinition = "varchar(20)")
-    public String region;
+    private String region;
     @Column(columnDefinition = "varchar(20)")
-    public String country;
+    private String country;
+
+
+    public Region(String region, String country) {
+        this.region = region;
+        this.country = country;
+    }
 }

@@ -1,0 +1,28 @@
+
+- bootstrap
+    DataGenerator
+        @Component
+        ClassRepository classRepository;
+        Constructor to ini classRepository
+        @Override run method
+            create new objects and add them to classRepository
+- entity
+    BaseEntity
+        @MappedSuperclass - not to create database table
+        common table fields to minimize code repetition
+    Classes to create tables
+        @Entity
+        @Table(name = "departments")
+        @Data
+        @NoArgsConstructor
+        extends BaseEntity
+        @Column(columnDefinition = "varchar(100)")
+        MAPPING OneToOne Bydirectional OBJECTS:
+            @OneToOne
+                @JoinColumn(name = "departmentId") //change the name of the join column
+                private Department department;
+            OR
+                @OneToOne(mappedBy = "department") //mappedBy name has to be the same name as other object is mapped to this class.
+- repository
+    Each Class will get ClassRepository interface with extends JpaRepository<Class, Key>
+

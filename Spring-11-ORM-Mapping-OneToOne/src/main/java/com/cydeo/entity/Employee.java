@@ -13,20 +13,21 @@ import java.time.LocalDate;
 public class Employee extends BaseEntity{
 
     @Column(columnDefinition = "varchar(50)")
-    public String firstName;
+    private String firstName;
     @Column(columnDefinition = "varchar(50)")
-    public String lastName;
+    private String lastName;
     @Column(columnDefinition = "varchar(50)")
-    public String email;
+    private String email;
     @Column(columnDefinition = "DATE")
-    public LocalDate hireDate;
-//    @Column(columnDefinition = "varchar(17)")
-//    public String department;
+    private LocalDate hireDate;
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(1)")
-    public Gender gender;
-    public  int salary;
+    private Gender gender;
+    private  int salary;
 //    public int region_id;
+    @OneToOne
+    @JoinColumn(name = "departmentId") //change the name of the join column
+    private Department department;
 
     public Employee(String firstName, String lastName, String email, LocalDate hireDate, Gender gender, int salary) {
         this.firstName = firstName;

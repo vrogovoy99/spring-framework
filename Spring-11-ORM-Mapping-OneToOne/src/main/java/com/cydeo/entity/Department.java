@@ -1,9 +1,6 @@
 package com.cydeo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +11,11 @@ import lombok.NoArgsConstructor;
 public class Department extends BaseEntity{
 //    @Id
     @Column(columnDefinition = "varchar(100)")
-    public String department;
+    private String department;
     @Column(columnDefinition = "varchar(100)")
-    public String division;
+    private String division;
+    @OneToOne(mappedBy = "department") //mappedBy name has to be the same name as other object is mapped to this class.
+    private Employee employee;
 
     public Department(String department, String division) {
         this.department = department;
