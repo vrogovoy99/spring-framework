@@ -31,6 +31,8 @@
 
 4. create entity/classes for java objects/database tables
 
+        @MappedSuperclass - do not create a table - this is supper class like BaseEntity
+            if id field covered in BaseEntity class then classes that extend it should have custom constructor.
         @Entity - map this class to a table in database
         @Table(name="altTableName") - create table in database
         @Id - use this field as primary key in a table.
