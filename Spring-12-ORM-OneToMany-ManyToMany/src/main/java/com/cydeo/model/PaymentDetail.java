@@ -11,10 +11,8 @@ import java.time.LocalDate;
 @Table(name = "paymentDetails")
 @Data
 @NoArgsConstructor
-public class PaymentDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PaymentDetail extends BaseEntity{
+
     private BigDecimal merchantPayoutAmount;
     private BigDecimal commissionAmount;
     @Column(columnDefinition = "DATE")

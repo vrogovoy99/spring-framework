@@ -1,0 +1,47 @@
+
+- bootstrap
+    DataGenerator
+        @Component
+        ClassRepository classRepository;
+        Constructor to ini classRepository
+        @Override run method
+            create new objects and add them to classRepository
+- entity
+    BaseEntity
+        @MappedSuperclass - not to create database table
+        common table fields to minimize code repetition
+    Classes to create tables
+        @Entity
+        @Table(name = "departments")
+        @Data
+        @NoArgsConstructor
+        extends BaseEntity
+        @Column(columnDefinition = "varchar(100)")
+        MAPPING OneToOne Bydirectional OBJECTS:
+            @OneToOne(cascade = CascadeType.ALL) // cascade will ensure that related objects are populated in database
+                                CascadeType.PERSIST - during save operations
+                                CascadeType.REMOVE - during delete operations
+                @JoinColumn(name = "departmentId") //change the name of the join column
+                private Department department;
+            And the other class:
+                @OneToOne(mappedBy = "department") //mappedBy name has to be the same name as other object is mapped to this class.
+                private Employee employee;
+        MAPPING OneToMany
+                @OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
+                private List<Payment> paymentList;
+            And the other class:
+                @ManyToOne
+                private Customer customer;
+        MAPPING ManyToMany
+                @ManyToMany(mappedBy = "itemList")
+                private List<Cart> cartList;
+            And the other class
+                @ManyToMany
+                @JoinTable(name = "cart_item_rel",
+                    joinColumns = @JoinColumn(name = "c_id"),
+                    inverseJoinColumns = @JoinColumn(name = "i_id"))
+                private List<Item> itemList;
+
+- repository
+    Each Class will get ClassRepository interface with extends JpaRepository<Class, Key>
+

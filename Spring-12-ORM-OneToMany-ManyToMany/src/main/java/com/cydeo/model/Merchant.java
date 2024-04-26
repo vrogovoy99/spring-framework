@@ -11,10 +11,8 @@ import java.util.List;
 @Table(name = "mertchants")
 @Data
 @NoArgsConstructor
-public class Merchant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Merchant extends BaseEntity{
+
     private String name;
     private String code;
     private BigDecimal transactionFee;

@@ -12,10 +12,8 @@ import java.time.LocalDate;
 @Table(name = "payments")
 @Data
 @NoArgsConstructor
-public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Payment extends BaseEntity{
+
     @Column(columnDefinition = "DATE")
     private LocalDate createdDate;
     private BigDecimal amount;
@@ -26,6 +24,12 @@ public class Payment {
 
     @ManyToOne
     private Merchant merchant;
+
+    @ManyToOne
+    private Customer customer;
+    @OneToOne
+    private Cart cart;
+
 
     public Payment(LocalDate createdDate, BigDecimal amount, Status paymentStatus) {
         this.createdDate = createdDate;
