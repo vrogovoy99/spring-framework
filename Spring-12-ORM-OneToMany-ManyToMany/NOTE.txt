@@ -7,6 +7,9 @@
         @Override run method
             create new objects and add them to classRepository
 - entity
+        * @Enumerated(value=EnumType.STRING)
+        * @Column(name = "startTime", columnDefinition="DATETIME")
+            @Temporal(TemporalType.TIMESTAMP)
     BaseEntity
         @MappedSuperclass - not to create database table
         common table fields to minimize code repetition
@@ -26,10 +29,11 @@
             And the other class:
                 @OneToOne(mappedBy = "department") //mappedBy name has to be the same name as other object is mapped to this class.
                 private Employee employee;
-        MAPPING OneToMany
+        MAPPING OneToMany (not required, since relationship controlled by ManyToOne side)
+                          (needed only in case is you want to define fetch type)
                 @OneToMany(mappedBy="customer", fetch = FetchType.LAZY)
                 private List<Payment> paymentList;
-            And the other class:
+            And the other class :
                 @ManyToOne
                 private Customer customer;
         MAPPING ManyToMany
