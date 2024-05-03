@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     //Display all employees with email address Bla
@@ -41,5 +42,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.email='amcnee1@google.es'")
     Employee getEmployeeDetail();
+    @Query("SELECT e.salary FROM Employee e WHERE e.firstName='Aeriell'")
+    Integer getEmployeeSalary();
+    @Query("SELECT e FROM Employee e WHERE e.email=?1")
+    Optional<Employee> getEmployeeDetail(String email);
+    @Query("SELECT e FROM Employee e WHERE e.email=?1 AND e.salary=?2")
+    Optional<Employee> getEmployeeDetail(String email, Integer salary);
 
 }

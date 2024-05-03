@@ -68,7 +68,11 @@ public class DataGenerator implements CommandLineRunner {
         employeeRepository.findBySalaryLessThanOrderBySalary(23000).stream()
                 .forEach(e-> System.out.println("findBySalaryLessThan 23000 : " + e.getSalary() + " - " + e));
 
-        System.out.println("getEmployeeDetail : " + employeeRepository.getEmployeeDetail());
+        System.out.println("\ngetEmployeeDetail : " + employeeRepository.getEmployeeDetail());
+        System.out.println("\ngetEmployeeSalary : " + employeeRepository.getEmployeeSalary());
+        System.out.println("\nparametarized getEmployeeDetail : " + employeeRepository.getEmployeeDetail("amcnee1@google.es"));
+
+
 
 
         System.out.println("-----------Employee End ------------------\n\n\n");
