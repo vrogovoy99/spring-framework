@@ -1,27 +1,32 @@
 package org.cydeo.bootstrap;
 
 import org.cydeo.entity.Employee;
+import org.cydeo.repository.CourseRepository;
 import org.cydeo.repository.DepartmentRepository;
 import org.cydeo.repository.EmployeeRepository;
 import org.cydeo.repository.RegionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Component
+@Transactional
 public class DataGenerator implements CommandLineRunner {
     private final RegionRepository regionRepository;
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final CourseRepository courseRepository;
 
-    public DataGenerator(RegionRepository regionRepository, DepartmentRepository departmentRepository, EmployeeRepository employeeRepository) {
+    public DataGenerator(RegionRepository regionRepository, DepartmentRepository departmentRepository, EmployeeRepository employeeRepository, CourseRepository courseRepository) {
         this.regionRepository = regionRepository;
         this.departmentRepository = departmentRepository;
         this.employeeRepository = employeeRepository;
+        this.courseRepository = courseRepository;
     }
 
     @Override
+//    @Transactional(readOnly = true)
     public void run(String... args) throws Exception {
 
         System.out.println("-----------Region Start ------------------");
@@ -73,10 +78,26 @@ public class DataGenerator implements CommandLineRunner {
         System.out.println("\nparametarized getEmployeeDetail : " + employeeRepository.getEmployeeDetail("amcnee1@google.es"));
         System.out.println("\ncount : " + employeeRepository.getEmployeeCount());
 
-
-
-
         System.out.println("-----------Employee End ------------------\n\n\n");
+
+        System.out.println("-----------Course Start ------------------");
+
+        courseRepository.findByCategory("Spring").forEach(System.out::println);
+        System.out.println("----");
+        courseRepository.findByCategoryOrderByName("String").forEach(System.out::println);
+        System.out.println("----");
+        System.out.println(" 'Getting Started with Spring Cloud Kubernetes' exists : " + courseRepository.existsByName("Getting Started with Spring Cloud Kubernetes "));
+        System.out.println("----");
+        System.out.println(" count of Spring : " + courseRepository.countByCategory("Spring"));
+        System.out.println("----");
+        courseRepository.findByNameStartingWith("G")
+                .forEach(System.out::println);
+        System.out.println("----");
+        courseRepository.streamByCategory("Spring").forEach(System.out::println);
+
+        System.out.println("-----------Course End ------------------\n\n\n");
+
+
 
 
     }
