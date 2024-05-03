@@ -71,6 +71,7 @@ public class DataGenerator implements CommandLineRunner {
         System.out.println("\ngetEmployeeDetail : " + employeeRepository.getEmployeeDetail());
         System.out.println("\ngetEmployeeSalary : " + employeeRepository.getEmployeeSalary());
         System.out.println("\nparametarized getEmployeeDetail : " + employeeRepository.getEmployeeDetail("amcnee1@google.es"));
+        System.out.println("\ncount : " + employeeRepository.getEmployeeCount());
 
 
 
