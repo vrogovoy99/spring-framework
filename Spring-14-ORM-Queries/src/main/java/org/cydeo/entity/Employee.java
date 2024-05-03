@@ -1,11 +1,10 @@
 package org.cydeo.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.cydeo.enums.Gender;
-import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -13,17 +12,17 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class Employee extends BaseEntity {
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String email;
     @Column(columnDefinition = "DATE")
-    private LocalDate hire_date;
-    @ManyToOne ()
+    private LocalDate hireDate;
+    @ManyToOne()
     @JoinColumn(name = "department")
     private Department department;
     @Enumerated (value = EnumType.STRING)
     private Gender gender;
-    private Long salary;
+    private Integer salary;
     @ManyToOne
     private Region region;
 }
