@@ -2,13 +2,16 @@ package org.cydeo.repository;
 
 import org.cydeo.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     //Display all employees with email address Bla
 
     List<Employee> findByEmail(String email);
@@ -58,7 +61,21 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // like/contains/startswith/endswith
     @Query("SELECT e FROM Employee e WHERE e.firstName like ?1 ")
     List<Employee> getEmployeeFirstNameLike(String pattern);
+    // SQL query
+    @Query(value = "SELECT * FROM employees  WHERE salary BETWEEN ?1 AND ?2 ORDER BY salary", nativeQuery = true)
+    List<Employee> readEmployeeDetailBySalary(int salaryStart, int salaryEnd);
+    @Query(value = "SELECT * FROM employees  WHERE salary BETWEEN :salaryStart AND :salaryEnd ORDER BY salary", nativeQuery = true)
+    List<Employee> readEmployeeDetailBySalaryParam(@Param("salaryStart") int salaryStart, @Param("salaryEnd") int salaryEnd);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Employee e SET e.email='bla' WHERE e.id = :id")
+    void updateEmployeeJPQL(@Param("id") int id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE employees SET email='bla-bla-bla' WHERE id = :id", nativeQuery = true)
+    void updateEmployeeSQL(@Param("id") int id);
 
 
 

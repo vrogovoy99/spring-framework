@@ -97,8 +97,25 @@ public class DataGenerator implements CommandLineRunner {
 
         System.out.println("-----------Course End ------------------\n\n\n");
 
+        System.out.println("----Employee SQL pushing $70000");
+        employeeRepository.readEmployeeDetailBySalary(69000, 70000).stream()
+                .forEach(p-> System.out.println(p.getFirstName() + " - " + p.getSalary()));
 
+        System.out.println("----Employee SQL pushing 90000");
+        employeeRepository.readEmployeeDetailBySalaryParam(89000, 90000).stream()
+                .forEach(p-> System.out.println(p.getFirstName() + " - " + p.getSalary()));
 
+        System.out.println("----Course native SQL ");
+        courseRepository.findByCategoryAndRatingGreaterThan("Spring", 3).stream()
+                .forEach(p-> System.out.println(p.getRating() + " - " + p.getName()));
+
+        System.out.println("----Employee modification ");
+        employeeRepository.updateEmployeeJPQL(1);
+        employeeRepository.findById(1).stream().forEach(e-> System.out.println(e.getFirstName() + " new email is " + e.getEmail()));
+        employeeRepository.updateEmployeeSQL(1);
+        employeeRepository.findById(1).stream().forEach(e-> System.out.println(e.getFirstName() + " new email is " + e.getEmail()));
+        employeeRepository.updateEmployeeJPQL(1);
+        employeeRepository.findById(1).stream().forEach(e-> System.out.println(e.getFirstName() + " new email is " + e.getEmail()));
 
     }
 }
