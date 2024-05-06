@@ -10,7 +10,8 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-public class UserAccount extends BaseEntity{
+@Table(name = "user_account")
+public class User extends BaseEntity{
 
     @NonNull
     private String email; //TODO:email must be validated
@@ -21,6 +22,5 @@ public class UserAccount extends BaseEntity{
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "accountDetailsId")
     private AccountDetails accountDetails;
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    private List<Ticket> ticketList;
+
 }
