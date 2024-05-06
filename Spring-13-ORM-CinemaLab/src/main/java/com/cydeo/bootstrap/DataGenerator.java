@@ -3,8 +3,11 @@ package com.cydeo.bootstrap;
 import com.cydeo.enums.State;
 import com.cydeo.enums.Type;
 import com.cydeo.repository.MovieRepository;
+import com.cydeo.repository.TicketRepository;
+import com.cydeo.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -13,18 +16,40 @@ import java.util.Date;
 public class DataGenerator implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
-    public DataGenerator(MovieRepository movieRepository) {
+    public DataGenerator(MovieRepository movieRepository, TicketRepository ticketRepository, UserRepository userRepository) {
         this.movieRepository = movieRepository;
+        this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
 
         callMovieRepository();
+        callTicketRepository();
+        callUserRepository();
 
         System.out.println("");
 
+
+
+    }
+
+    private void callUserRepository(){
+
+        System.out.println("------------------- USER DERIVED QUERIES -------------------");
+
+        System.out.println("\n------------------- user by email  -------------------");
+        System.out.println(userRepository.findFirstByEmail("josie_story@email.com"));
+    }
+    private void callTicketRepository() {
+        System.out.println("------------------- TICKET DERIVED QUERIES -------------------");
+
+        System.out.println("\n------------------- tickets per user  -------------------");
+//        System.out.println(userRepository.findById(1L).ifPresent(getUsername() + " has " + ticketRepository.countByUser(userRepository.getById(1L)) + " tickets.");
 
 
     }
