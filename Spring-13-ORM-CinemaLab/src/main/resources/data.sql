@@ -1,6 +1,3 @@
-insert into test_table(field_one, field_two)
-values('test1.1', CURRENT_TIMESTAMP);
-
 
 INSERT INTO location (name, address, postal_code, country, state, city) VALUES
                                                                             ('AMC Empire 25', '234 W 42nd St', '10036', 'United States', 'New York', 'New York'),

@@ -24,6 +24,8 @@ public class DataGenerator implements CommandLineRunner {
 
     private void callMovieRepository(){
         System.out.println("------------------- MOVIE DERIVED QUERIES -------------------");
+        movieRepository.findByNameContaining("The")
+                .stream().forEach(p-> System.out.println(p.getName()));
 
     }
 }

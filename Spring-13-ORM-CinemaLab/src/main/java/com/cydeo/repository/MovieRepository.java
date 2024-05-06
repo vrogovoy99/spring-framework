@@ -3,11 +3,15 @@ package com.cydeo.repository;
 import com.cydeo.entity.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     // ------------------- DERIVED QUERIES ------------------- //
 
+
     //Write a derived query to read a movie with a name
+    List<Movie> findByNameContaining(String name);
 
     //Write a derived query to list all movies between a range of prices
 
