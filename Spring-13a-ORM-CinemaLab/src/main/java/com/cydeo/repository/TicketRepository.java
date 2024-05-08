@@ -1,23 +1,15 @@
 package com.cydeo.repository;
 
 import com.cydeo.entity.Ticket;
-import com.cydeo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     // ------------------- DERIVED QUERIES ------------------- //
 
     //Write a derived query to count how many tickets a user bought
-//    Integer countByUser(User user);
 
     //Write a derived query to list all tickets by specific email
-//    List<Ticket> findByUser_Email(String email);
-    @Query("SELECT t FROM Ticket t WHERE t.user.email=?1")
-    List<Ticket> findByUser_Email(String email);
 
     //Write a derived query to count how many tickets are sold for a specific movie
 

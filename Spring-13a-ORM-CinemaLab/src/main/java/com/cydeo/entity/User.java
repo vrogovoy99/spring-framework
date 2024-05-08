@@ -1,27 +1,25 @@
 package com.cydeo.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import javax.persistence.*;
 
 @Entity
-//@Data
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "user_account")
 public class User extends BaseEntity{
 
-    @NonNull
-    private String email; //TODO:email must be validated
-    @NonNull
-    private String password; //TODO: minimym 6 characters and can't be null
-    @NonNull
+    private String email;
+    private String password;
     private String username;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_details_id")
-    private AccountDetails accountDetails;
+    private Account account;
 
     @Override
     public String toString() {

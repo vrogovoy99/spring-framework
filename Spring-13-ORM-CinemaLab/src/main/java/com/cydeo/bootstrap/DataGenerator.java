@@ -43,7 +43,7 @@ public class DataGenerator implements CommandLineRunner {
         System.out.println("------------------- USER DERIVED QUERIES -------------------");
 
         System.out.println("\n------------------- user by email  -------------------");
-        System.out.println(userRepository.findFirstByEmail("josie_story@email.com"));
+//        System.out.println(userRepository.findFirstByEmail("josie_story@email.com"));
     }
     private void callTicketRepository() {
         System.out.println("------------------- TICKET DERIVED QUERIES -------------------");
@@ -51,6 +51,10 @@ public class DataGenerator implements CommandLineRunner {
         System.out.println("\n------------------- tickets per user  -------------------");
 //        System.out.println(userRepository.findById(1L).ifPresent(getUsername() + " has " + ticketRepository.countByUser(userRepository.getById(1L)) + " tickets.");
 
+        System.out.println("\n-------------------  list all tickets by specific email  -------------------");
+//        ticketRepository.findByUser_Email("josie_story@email.com")
+//                .stream().forEach(t-> System.out.println(t.getUser().getEmail()));
+        System.out.println(ticketRepository.findByUser_Email("josie_story@email.com"));
 
     }
 
