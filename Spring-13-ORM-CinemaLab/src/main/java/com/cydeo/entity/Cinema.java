@@ -1,21 +1,20 @@
 package com.cydeo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @Entity
-@NoArgsConstructor
 @Data
-public class Cinema extends BaseEntity{
+@NoArgsConstructor
+public class Cinema extends BaseEntity {
+
     private String name;
-    private String sponsored_name;
-    @ManyToOne
+    private String sponsoredName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
-    @OneToMany(mappedBy = "cinema")
-    private List<MovieCinema> movieCinemaList;
 }

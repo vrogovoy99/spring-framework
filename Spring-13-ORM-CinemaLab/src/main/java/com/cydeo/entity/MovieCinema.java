@@ -1,25 +1,30 @@
 package com.cydeo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class MovieCinema extends BaseEntity{
+public class MovieCinema extends BaseEntity {
+
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDate dateTime;
-    @ManyToOne
+    private LocalDateTime dateTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Movie movie;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Cinema cinema;
-    @OneToMany(mappedBy = "movieCinema")
-    private List<Ticket> ticketList;
+
+
+
+
+
 }

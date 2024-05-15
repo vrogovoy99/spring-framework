@@ -1,26 +1,25 @@
 package com.cydeo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import javax.persistence.Entity;
+import java.math.BigDecimal;
 
 @Entity
-@NoArgsConstructor
 @Data
-public class Location extends BaseEntity{
+@NoArgsConstructor
+public class Location extends BaseEntity {
+
     private String name;
-    private String address;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private String postalCode;
     private String country;
     private String state;
     private String city;
+    private String address;
 
-//    OneToMany not required, since relationship is contorlled b the other side
-//    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
-//    private List<Cinema> cinemaList;
+
 
 }
