@@ -1,0 +1,127 @@
+To annotate API controller:
+
+API
+
+     -> Creating API
+     -> Jackson
+     -> Consuming API
+        -> RestTemplate
+        -> FeignClient - spring cloud
+        -> WebClient - Reactive Programming
+     -> Security
+     -> Exception Handling
+     -> Documentation (Swagger, OPENApi)
+
+AOP + Logging
+
+Testing
+
+Deployment
+
+Microservices
+
+1. API version 1
+1.1. add @RestController and @RequestMapping before the controller class
+
+        @RestController // @Controller + @ResponseBody
+        @RequestMapping("/courses/api/v1")
+        public class CourseController {
+
+1.2. use @Get<m>apping to change land point and implement URL variables
+
+         @GetMapping
+            public List<CourseDTO> getAllCourses(){
+
+        @GetMapping("{id}")
+        public CourseDTO getCourseById(@PathVariable("id") Long courseId){
+
+        @GetMapping("category/{name}")
+
+1.3. use @PostMapping and @RequestBody to pass DTO objects (JSON will be converted by Jackson)
+
+        @PostMapping
+            public CourseDTO createCourse(@RequestBody CourseDTO course)
+
+1.4. use @PutMapping, URL and @PathVariables for object updates
+
+        @PutMapping("{id}")
+        public void updateCourse(@PathVariable("id") Long courseId,@RequestBody CourseDTO course){
+            courseService.updateCourse(courseId,course);
+
+1.5. use @DeleteMapping, URL variable to delete object
+
+        @DeleteMapping("{id}")
+        public void deleteCourseById(@PathVariable("id") Long courseId){
+            courseService.deleteCourseById(courseId);
+
+1.6. use @DeleteMapping without parameters to delete entire database
+
+        @DeleteMapping
+        public void deleteCourses(){
+            courseService.deleteCourses();
+
+2. API version 2 - controls not just JSON body output, but also the header parameters of the response. Controller returns ResposeEntity class.
+
+        @GetMapping
+        public ResponseEntity<List<CourseDTO>> getAllCourses(){
+            return ResponseEntity
+                    .status(HttpStatus.ACCEPTED)
+                    .header("Version","Cydeo.V2")
+                    .header("Operation","Get List")
+                    .body(courseService.getCourses());
+        }
+
+3. API version 3. Customized JSON output:
+
+        create new entity like @Getter
+                               @Setter
+                               @NoArgsConstructor
+                               public class ResponseWrapper {
+
+                                   private boolean success; //status of the operation
+                                   private String message;  //custom message
+                                   private Integer code;    //status code
+                                   private Object data;     //return object
+
+        API controller will return  ResponseEntity<ResponseWrapper>
+
+4. Jackson JSON annotations
+
+4.1. avoid fields to be included in Jackson outputed JSON
+
+4.1.1 use @JaonIgnore in class.field definition.
+
+        public class User extends BaseEntity {
+            @JsonIgnore
+            private String email;
+
+
+4.1.2. OR use @JsonIgnoreProperties in class definition:
+
+        @JsonIgnoreProperties(value = {"state", "postalCode"},ignoreUnknown = true)
+        public class Account extends BaseEntity {
+
+4.2. avoid serialization of subObjects use @JsonBackReference
+
+        @JsonBackReference //is the back part of reference - it will be omitted from serialization
+        private User user;
+
+4.3. To limit fields of the object to be included in serealization in case of reference:
+
+        @JsonManagedReference //is the forward part of reference - the one that gets serialized normally
+        private Account account;
+
+4.4. Suppress LAZY empty fields
+
+        @JsonIgnoreProperties(value = {"hibernateLazyInitializer"},ignoreUnknown = true)
+        public class User extends BaseEntity {
+            @OneToOne(fetch = FetchType.LAZY)
+            private Account account;
+
+4.5. include field only in post but not in the retrieve (like password - we need to post it in database, but don't want to display in the retrieval)
+
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        private String password;
+
+
+

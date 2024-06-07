@@ -1,44 +1,60 @@
 <!DOCTYPE html>
-<html lang="us" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
-<body align="center">
 
 <div align="center">
-<table ><tr><td align="left">
-<form th:object="${mentor}" th:action="@{/mentor/confirm}" method="post">
+<body>
 
-    <label>First Name:</label>
-    <input type="text" id="FirstName" th:field="*{firstName}"><br>
+  <form th:action="@{/mentor/confirm}" method="post"  th:object="${mentor}">
 
-    <label>Last Name:</label>
-    <input type="text" id="LastName" th:field="*{lastName}"><br>
+      <label>First Name:</label>
+     <input type="text" id="FirstName" th:field="*{firstName}"><br>
 
-    <label>Email:</label>
-    <input type="email" id="email" th:field="*{email}"><br>
+      <label>Last Name:</label>
+      <input type="text" id="LastName" th:field="*{lastName}"><br>
 
-    <label>Gratuated:</label>
-    <input type="checkbox" th:field="*{graduated}"><br>
+      <label>Email:</label>
+      <input type="email" id="email" th:field="*{email}"><br>
 
-    <label>Gender:</label>
-    <input type="radio" value="Male" th:field="*{gender}">Male
-    <input type="radio" value="Female" th:field="*{gender}">Female<br>
+      <label>Graduated:</label>
+      <input type="checkbox" th:field="*{graduated}"><br>
 
-    <label>Batch Number:</label>
-    <select th:field="*{batch}">
-        <option th:each="theBatch : ${batchList}" th:value="${theBatch}" th:text="${theBatch}"></option>
-    </select><br>
+      <label>Gender:</label>
+      <input type="radio" value="Male" th:field="*{gender}">Male
+      <input type="radio" value="Female" th:field="*{gender}">Female<br>
 
-    <label>Company:</label>
-    <textarea th:field="*{company}"></textarea><br>
+      <label>Batch Number:</label>
+      <select th:field="*{batch}">
+          <option th:each="theBatch : ${batchList}" th:value="${theBatch}" th:text="${theBatch}"></option>
+      </select><br>
 
-    <button type="submit">Register</button>
+      <label>Company:</label>
+      <textarea th:field="*{company}"></textarea><br>
 
-</form>
-</td></tr></table>
-</div>
+      <button type="submit">Register</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </form>
+
+
+
 
 </body>
+</div>
 </html>
