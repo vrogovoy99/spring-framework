@@ -123,5 +123,7 @@ Microservices
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private String password;
 
+5. generate objects from JSON:
 
+        https://www.jsonschema2pojo.org/
 

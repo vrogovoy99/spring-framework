@@ -1,0 +1,32 @@
+CREATE API SERVICE BASED ON EXISTING API SERVICES.
+
+
+1. get JSON from API service https://api.sampleapis.com/beers/stouts
+
+2. use https://www.jsonschema2pojo.org/ to generate classes from provided JSON
+
+3. Copy generated classes into com.cydeo.dto repository (Beer and Ratings)
+
+4. Create new controller Consume_RestBeer
+
+5. RestTemplate bean already created in runner file. Inject RestTemplate bean in Consume_RestBeer controller.
+
+6. Retrieve data from API service:
+
+    6.1. getForEntity retrieves and converts JSON into specific object
+
+        restTemplate.getForEntity(URI + "/" + id, Beer.class);
+
+    6.2. getForObject retrieves and converts JSON into generic object
+
+        restTemplate.getForObject(URI + "/" + id, Object.class, id);
+
+    6.3. to pass headers to api server use restTemplate.exchange
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            headers.set("app-id","6298ebfecd0551211fce37a6");
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<Object> response = restTemplate.exchange("https://dummyapi.io/data/v1/user?limit=10", HttpMethod.GET,entity,Object.class);
