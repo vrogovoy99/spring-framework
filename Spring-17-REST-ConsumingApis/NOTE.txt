@@ -11,7 +11,7 @@ CREATE API SERVICE BASED ON EXISTING API SERVICES.
 
 5. RestTemplate bean already created in runner file. Inject RestTemplate bean in Consume_RestBeer controller.
 
-6. Retrieve data from API service:
+6. restTemplate >>>> Retrieve data from API service:
 
     6.1. getForEntity retrieves and converts JSON into specific object
 
@@ -30,3 +30,45 @@ CREATE API SERVICE BASED ON EXISTING API SERVICES.
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<Object> response = restTemplate.exchange("https://dummyapi.io/data/v1/user?limit=10", HttpMethod.GET,entity,Object.class);
+
+7. FeighClient >>> Retrieve data from the API server
+
+    7.1. add @EnableFeignClients in runner class
+
+    7.2. create client/BeerClient interface (per each API source) with:
+
+            @FeignClient(url = "https://api.sampleapis.com/beers/",name = "BEER-CLIENT")
+            public interface BeerStout {
+                @GetMapping("/stouts")
+                List<User> getBeer();
+            }
+
+    7.3. Inject BeerClient interface in Consume_FeignClient.
+
+    7.4. Call getBeer
+
+         @GetMapping("/api/v1/beer")
+            public ResponseEntity<ResponseWrapper> getBeer(){
+                return ResponseEntity.ok(new ResponseWrapper("BeerList Retrieved",beerStout.getBeer()));
+            }
+
+8. WebClient (used for asynchronous processing)
+
+    8.1. Requires webflux dependency
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+            </dependency>
+
+    8.2. return 1 (Mono) or multiple (Flux instead of List)
+
+        @GetMapping("/flux-movie-cinemas")
+        public Flux<MovieCinema> readAllCinemaFlux(){
+            return Flux.fromIterable(movieCinemaRepository.findAll());
+        }
+
+9. Jackson biding error. Add in applcation.properties:
+
+        spring.jackson.serialization.fail-on-empty-beans=false
+
