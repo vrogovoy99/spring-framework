@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: 'CYDEO open api documentation'
+  description: ''
+  contact:
+    name: CYDEO
+    url: https://cydeo.com
+servers:
+  - description: 'prod cydeo google search web site'
+    url: https://www.cydeo.com
+  - description: 'dev cydeo search web site'
+    url: https://dev.cydeo.com
+  - description: 'qa cydeo search web site'
+    url: https://qa.cydeo.com
+    
+paths:
+  /v1/courses:
+    get:
+      summary: Course List
+      description: List of Cources
+      tags:
+        - Courses # tag to group URLs together 
+      parameters:
+        - name: courseId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200': 
+          description: 'List of cources'
+          content:
+            'application/json':
+              schema:
+                type: array
+                minimum: 1
+                maximum: 100
+                items:
+                  type: string
+                  description: 'Java cource'
+                  minimum: 2
+                  maximum: 100
+                  example: 'Java cource'
+        '400': 
+          description: 'No cources required'
+  /v1/students:
+    get:
+      summary: 'Get list of students'
+      tags:
+        - Students 
+      responses:
+        '200': 
+          description: 'List of students'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/studentArray'        
+        '400': 
+          description: 'No students required'
+    post:
+      summary: 'Create new student'
+      description: create new student
+      tags:
+        - Students 
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/studentArray' 
+      responses:
+        '200':
+          description: 'student created'
+          headers:
+            localization:
+              description: Location of student
+              schema:
+                type: string
+                format: uri
+                example: 'https:cydeo.com'
+        '400':
+          description: 'student not created'
+  /v1.students/{studentId}: # passing parameter to api
+    get:
+      summary: "Get specific student"
+      tags:
+        - Students
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 'Student info'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/student'
+        '400':
+          description: 'Student not found'
+    put:
+      summary: 'Update specific student'
+      description: 'update **specific** student'
+      tags: 
+        - Students
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody: 
+        required: true
+        content: 
+          'application/json':
+            schema: 
+              $ref: '#/components/schemas/student'
+      responses:
+        '200':
+          description: 'Student updated'
+        '400':
+          description: 'Student not updated'
+    delete: 
+      summary: 'Delete specific student'
+      description: 'Delete **specific** student'
+      tags: 
+        - Students
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses: 
+        '200':
+          description: 'Student deleted'
+        '400':
+          description: 'Student not deleted' 
+components:
+  schemas:
+    address:
+      type: object
+      properties:
+        street: 
+          type: string
+          example: '2 Malishko St.'
+        city:
+          type: string
+          example: 'Kiev'
+        state:
+          type: string
+          #enum: [VA, CA, TX]
+          enum: 
+            - VA
+            - CA
+            - TX
+            - NJ
+            - NY
+          example: 'NJ'
+        zipcode:
+          type: integer
+          format: int32
+          example: 10023
+    student:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          minimum: 2
+          maximum: 100
+          example: 'John'
+        lastName:
+          type: string
+          minimum: 2
+          maximum: 100
+          example: 'Smith'
+        address:
+          $ref: '#/components/schemas/address'
+    studentArray:
+      type: array
+      minimum: 1
+      maximum: 100
+      items:
+        $ref: '#/components/schemas/student'
