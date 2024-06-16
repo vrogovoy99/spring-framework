@@ -1,0 +1,72 @@
+To add security
+
+1. add pom.xml dependencies:
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>18.0.0</version>
+        </dependency>
+
+2. add in application.properties
+
+            keycloak.realm=cydeo-dev
+            keycloak.auth-server-url=http://localhost:8080/auth
+            keycloak.ssl-required=external
+            keycloak.resource=training
+            keycloak.credentials.secret=AdIUYCYvD5HuYr6OQSdJcI30u3NCrIIa
+            keycloak.use-resource-role-mappings=true
+            keycloak.bearer-only=true
+            spring.main.allow-circular-references=true
+
+3. Add com.cydeo.config SecurityConfig class.
+
+4. To limit access to controller end points use:
+
+      @RolesAllowed({"ADMIN","USER"})
+
+5. The calls to api will fail, because user is not defined.
+
+RUN APPLICATIONS
+------------------------------------------
+
+1. run Spring 19 applications in InteliJ
+2. in POSTMAN > create request to initialize organization
+	POST: localhost:8082/v1/organization
+	body:  raw:
+		{
+ 		   "name": "ABC Limited",
+    		   "contactName":"tom",
+		   "contactEmail":"tom@gmail.com",
+    		   "contactPhone":"1231231234"
+		}
+	GET AUTHORIZATION TOKEN
+	Authorization:
+		Auth Type: 	OAuth 2.0
+		Grant Type: 	Password Credentials
+	  Access Token URL:	http://localhost:8080/auth/realms/cydeo-dev/protocol/openid-connect/token
+		Client ID:	training
+		Client Secret:	Get it from KeyCloak web admin
+		Username:	mike
+		password:	abc1
+		scope:		openid
+	Click on Get New Access Token
+	Click on accept.
+	Click on Send POST request.
+
+3. in POSTMAN > get organization:
+        GET:    localhost:8082/v1/organization/3
+        Authorization same as in #2
+
+4. in POSTMAN > create licence
+        POST: localhost:8081/v1/organization/1/license
+
+5. in POSTMAN > get licence
+        GET: localhost:8081/v1/organization/1/license/1
+
+        request fails, since it requests organization data. So, we need organization token. It can be copied from step 2 and added
+        Authorization > Bearer Token, paste #3 token
