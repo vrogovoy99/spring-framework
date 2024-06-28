@@ -1,0 +1,139 @@
+Aspect Oriented Programming
+
+
+1. Simple way to log access to a method is to define logger in the class definition:
+
+    CourseController:
+
+    Logger logger = LoggerFactory.getLogger(CourseController.class);
+
+    public List<CourseDTO> getAllCourses() {
+            logger.info("Before -> Controller: {} - Method {} "," CourseController","getCourses()");
+            List<CourseDTO> list = courseService.getCourses();
+            logger.info("After -> Controller: {} - Method : {} - Output : {}"," CourseController","getCourses()", list.toString());
+            return list;
+        }
+
+    GET: localhost:8080/courses/api/v1
+
+2. Aspect logging:
+
+    Aspect          - Module of code for a cross-cutting concerns
+    Advice     WHEN - What action is taken and when it should be applied
+    Join Point WHAT - particular point during execution of program like method execution, constructor call
+    Pointcut  WHERE - a predicate that matches join points. Advice is associated with a pointcut
+                        expression and runs at any join point matched by the pointcut
+    Weaving         - the process of linking aspects with targeted objects to create an advised object
+    Proxy           - an object that is creates after applying advice to the target object, in clients
+                        perspective, object, the target object, and the proxy object are same
+    Target Object   - the object on which advices are applied, In Spring AOP, a subclass is created at
+                        runtime where the target method is overridden and advices are included based
+                        on their configuration
+
+    @Pointcut("execution(* com.cydeo.controller.CourseController.*(..))")
+                |        |              |           |            | |
+    intercept on         |              |           |            | parameters of the method to be intercepted
+    execution            |              |           |            method to be intercepted
+               return type              |           class to be intercepted
+                            package name
+
+2.1. Add dependency
+
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                </dependency>
+
+2.1. add com.cydeo.aspect LoggingAspect.class (Configuration annotation)
+
+            Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+            @Pointcut("execution(* com.cydeo.controller.CourseController.*(..))")
+            private void pointcut(){}
+
+            @Before("pointcut()")
+            public void log(){
+                logger.info("Logger info ------");
+            }
+    OR combine pointcut and before
+
+            Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+            @Before("execution(* com.cydeo.controller.CourseController.*(..))")
+            public void log(){
+                logger.info("Logger info ------");
+            }
+
+2.2. log the method and parameters that are being used
+
+
+            Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+            @Before("execution(* com.cydeo.controller.CourseController.*(..))")
+            public void beforeCourseRepoOperation(JoinPoint joinPoint){
+                logger.info("Before (findById) : -> Method: {} - Arguments: {} - Target: {}", joinPoint, joinPoint.getArgs(), joinPoint.getTarget());
+            }
+2.3. object level within
+
+    within - app classes
+    @within - spring libraries
+
+ //within
+    @Pointcut("within(com.cydeo.controller..*)")
+    private void anyControllerOperation(){}
+
+    @Pointcut("@within(org.springframework.stereotype.Service)")
+    private void anyServiceOperation(){
+    }
+
+    @Before("anyControllerOperation() || anyServiceOperation()")
+    public void beforeControllerAdvice(JoinPoint joinPoint){
+        logger.info("Before () -> Method : {} - Arguments : {} - Target: {}", joinPoint, joinPoint.getArgs(), joinPoint.getTarget());
+    }
+
+2.4. Annotation
+
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+                                                                        |
+                                                                        annotation in controller classes. (@DeleteMapping, @GetMapping, @PostMapping....)
+
+    Custom annotations can be created to pinpoint log audit points. See com.cydeo.annotation.Loggable:
+
+         @Target({ElementType.METHOD})
+         @Retention(RetentionPolicy.RUNTIME)
+         public @interface Loggable {}
+
+    Once custom annotation is defined - it can be added at any method to be monitored.
+
+2.5. capturing errors in a specific PointCut @AfterThrowing
+
+        @AfterThrowing(pointcut = "anyGetCourseOperation()", throwing = "exception")
+        public void afterThrowingControllerAdvice(JoinPoint joinPoint, RuntimeException exception){
+            logger.info("After Throwing -> Method: {} - Exception: {}", joinPoint.getSignature().toShortString(), exception.getMessage());
+        }
+
+2.5. capture output after any execution result @After (successfull or failed)
+
+    @After("anyGetCourseOperation()")
+    public void afterControllerAdvice(JoinPoint joinPoint) {
+        logger.info("After finally -> Method : {}", joinPoint.getSignature().toShortString());
+    }
+
+2.6. @Around
+
+    Method contains code to be executed before and after monitored method execution.
+    proceedingJoinPoint.proceed() triggers execution of monitored method
+
+
+    @Around("anyLoggableMethodOperation()")
+    public Object anyLoggableMethodOperationAdvice(ProceedingJoinPoint proceedingJoinPoint){
+        logger.info("Before () -> Method : {} - Parameters: {}", proceedingJoinPoint.getSignature().toShortString(), proceedingJoinPoint.getArgs());
+        Object results = null;
+        try {
+            results =proceedingJoinPoint.proceed();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        logger.info("After -> Method: {} - Results: {}", proceedingJoinPoint.getSignature().toShortString(),results.toString());
+        return results;
+    }
