@@ -103,6 +103,11 @@ Aspect Oriented Programming
          @Retention(RetentionPolicy.RUNTIME)
          public @interface Loggable {}
 
+         AND
+
+         @Pointcut("@annotation(com.cydeo.annotation.Loggable)")
+
+
     Once custom annotation is defined - it can be added at any method to be monitored.
 
 2.5. capturing errors in a specific PointCut @AfterThrowing
