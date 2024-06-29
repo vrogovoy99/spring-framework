@@ -18,24 +18,44 @@ Aspect Oriented Programming
 
 2. Aspect logging:
 
+    AOP COMPONENTS (AOP Presentation.pdf):
+
     Aspect          - Module of code for a cross-cutting concerns
+                        @Aspect put in front of aspect defining class
+
     Advice     WHEN - What action is taken and when it should be applied
+                        @Before
+                        @AfterExecution
+                        @Around (with proceedingJoinPoint.proceed())
+                        @AfterThrowing
+
     Join Point WHAT - particular point during execution of program like method execution, constructor call
     Pointcut  WHERE - a predicate that matches join points. Advice is associated with a pointcut
                         expression and runs at any join point matched by the pointcut
+                        @Pointcut annotation defined in aspect class
+
+
+                        @Pointcut("execution(* com.cydeo.controller.CourseController.*(..))")
+                                    |        |              |           |            | |
+                        intercept on         |              |           |            | parameters of the method to be intercepted
+                        execution            |              |           |            method to be intercepted
+                                   return type              |           class to be intercepted
+                                                package name
+
+                        ‣ ? - optional to specify, e.g. modifiers, throws_exception
+                        ‣ * - wildcard
+                        ‣ () - for parameter-pattern, means no argument
+                        ‣ b(..) – for matching parameter-pattern with zero or more arguments of any type
+                        ‣ (*) – pattern matches a method that takes one parameter of any type
+                        ‣ (*,String) – matches a method that takes two parameters, first one is of any
+                        type and second parameter of type strin
+
     Weaving         - the process of linking aspects with targeted objects to create an advised object
     Proxy           - an object that is creates after applying advice to the target object, in clients
                         perspective, object, the target object, and the proxy object are same
     Target Object   - the object on which advices are applied, In Spring AOP, a subclass is created at
                         runtime where the target method is overridden and advices are included based
                         on their configuration
-
-    @Pointcut("execution(* com.cydeo.controller.CourseController.*(..))")
-                |        |              |           |            | |
-    intercept on         |              |           |            | parameters of the method to be intercepted
-    execution            |              |           |            method to be intercepted
-               return type              |           class to be intercepted
-                            package name
 
 2.1. Add dependency
 
@@ -75,8 +95,10 @@ Aspect Oriented Programming
             }
 2.3. object level within
 
-    within - app classes
+    within - class level annotation
     @within - spring libraries
+    @annotation - method level annotation
+    execution - method level
 
  //within
     @Pointcut("within(com.cydeo.controller..*)")
