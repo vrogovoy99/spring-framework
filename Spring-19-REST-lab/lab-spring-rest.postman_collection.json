@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "e2bef5e3-860c-455d-a448-0f72b9d73ba1",
+		"name": "lab-spring-rest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "35281657"
+	},
+	"item": [
+		{
+			"name": "getAddress",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8080/api/v1/address/02"
+			},
+			"response": []
+		},
+		{
+			"name": "getParents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8080/api/v1/parent"
+			},
+			"response": []
+		},
+		{
+			"name": "getStudent",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8080/api/v1/student"
+			},
+			"response": []
+		},
+		{
+			"name": "getTeacher",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8080/api/v1/teacher"
+			},
+			"response": []
+		},
+		{
+			"name": "findTeacher",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:8080/api/v1/teacher/frank"
+			},
+			"response": []
+		},
+		{
+			"name": "createTeacher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"firstName\": \"Piter\",\r\n        \"lastName\": \"Gotti1First\",\r\n        \"phoneNumber\": \"1112223333\",\r\n        \"email\": \"piter@email\",\r\n        \"username\": \"piter\",\r\n        \"password\": \"111222333\",\r\n        \"birthday\": \"1971-01-06\",\r\n        \"educationLevel\": \"MASTER\",\r\n        \"addressNo\": \"01\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/v1/teacher/"
+			},
+			"response": []
+		},
+		{
+			"name": "createStudent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n            \"firstName\": \"Piter\",\r\n            \"lastName\": \"BytyqiFirst\",\r\n            \"phoneNumber\": \"11111111\",\r\n            \"email\": \"piter@email.com\",\r\n            \"username\": \"kaya11\",\r\n            \"birthday\": \"1200-01-27\",\r\n            \"addressNo\": \"05\",\r\n            \"parent\": \"fidanbytyqi\",\r\n            \"teacher\": \"mike\"\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/v1/student"
+			},
+			"response": []
+		},
+		{
+			"name": "updateAddress",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"addressNo\": \"02\",\r\n        \"street\": \"Str. Garibaldi\",\r\n        \"country\": \"France\",\r\n        \"city\": \"Paris\",\r\n        \"postalCode\": \"10001\",\r\n        \"addressType\": \"STUDENT\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/v1/address/02"
+			},
+			"response": []
+		}
+	]
+}
