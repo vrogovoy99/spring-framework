@@ -24,3 +24,8 @@
        assertTrue(Calculator.operator.equals("add"), "Really?");
        assertEquals("adding", Calculator.operator,"Really?");
        assertEquals(5, Calculator.add(2,3), "Expected 5");
+       assertArrayEquals(new int[]{1,2,3}, new int[]{1,2,3});
+          String nullString = null;
+          String notNullString = "Cydeo";
+          assertNull(nullString);
+          assertNotNull(notNullString);

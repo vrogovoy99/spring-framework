@@ -17,11 +17,16 @@ class CalculatorTest {
 
     @Test
     void testCase3() {
-        fail("Test fail testCase3");
+        assertArrayEquals(new int[]{1,2,3}, new int[]{1,2,3});
     }
 
     @Test
-    void testCase4() {}
+    void testCase4() {
+        String nullString = null;
+        String notNullString = "Cydeo";
+        assertNull(nullString);
+        assertNotNull(notNullString);
+    }
 
     @Test
     void testCase5() {}
