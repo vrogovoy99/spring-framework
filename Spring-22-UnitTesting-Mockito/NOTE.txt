@@ -1,0 +1,38 @@
+1. Add dependency
+
+    if working with Spring then add below, since it already contains org.mockito:mockito-junit-jupiter and org.mockito:mockito-core
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+            </dependency>
+
+    Otherwise, make sure following dependencies are included:
+        org.mockito:mockito-junit-jupiter
+        org.mockito:mockito-core
+
+2. test class head with @ExtendWith(MockitoExtension.class) to include Mockito libraries
+
+3. Use @Mock to define classes we want to mock, Inject mocked object and run test using mocked object
+
+    steps illustrated in com\cydeo\service\impl\UserServiceImplTest.java
+
+     verify(userRepository, {additional param}).deleteByUserName("mikesmith@cydeo.com");
+                |               |                       |
+        mock class              |                       mock method in mock class
+                            times(2)        - method is expected to run 2 times.
+                            atLeastOnce()   - method is expected to run at least once
+                            atLeast(x)      - method is expected to run at least x times
+                            atMostOnce()    - method is expected to run at most once
+                            atMost(x)    - method is expected to run at most x times
+
+4. Ensuring the order of execution.
+    Making sure that delete executed prior to findAll in test method.
+
+    InOrder inOrder = inOrder(userRepository);
+
+            inOrder.verify(userRepository).deleteByUserName("mikesmith@cydeo.com");
+            inOrder.verify(userRepository).findAll();
+
+5. Mock returns TaskServiceImplTest.java testing projectService.getByProjectCode()
