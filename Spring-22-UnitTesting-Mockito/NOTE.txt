@@ -12,7 +12,11 @@
         org.mockito:mockito-junit-jupiter
         org.mockito:mockito-core
 
-2. test class head with @ExtendWith(MockitoExtension.class) to include Mockito libraries
+2. test class head with
+
+        @ContextConfiguration(classes = {[class name to be tested].class})
+        @ExtendWith(MockitoExtension.class)
+        to include Mockito libraries
 
 3. Use @Mock to define classes we want to mock, Inject mocked object and run test using mocked object
 
@@ -36,3 +40,9 @@
             inOrder.verify(userRepository).findAll();
 
 5. Mock returns TaskServiceImplTest.java testing projectService.getByProjectCode()
+
+6. Use Diffblue Cover plugin to generate tests
+
+        Install Mockito plugin
+        Settings > Plugins > search for Diffblue Cover
+
