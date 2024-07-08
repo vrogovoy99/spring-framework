@@ -1,0 +1,8 @@
+1. In case if MVC class is not using inserted modules then use @WebMvcTest([test.class]) class annotation (See WelcomeControllerTest.java)
+
+2. Autowire MockMvc bean
+
+    @Autowired
+    private MockMvc mvc;
+
+
