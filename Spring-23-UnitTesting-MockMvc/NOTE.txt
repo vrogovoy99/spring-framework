@@ -1,8 +1,33 @@
-1. In case if MVC class is not using inserted modules then use @WebMvcTest([test.class]) class annotation (See WelcomeControllerTest.java)
 
-2. Autowire MockMvc bean
+1. MVC DOES NOT USE INJECTED MODULES
+
+1.1. In case if MVC class is not using inserted modules then use @WebMvcTest([test.class]) class annotation (See WelcomeControllerTest.java)
+
+1.2. Autowire MockMvc bean
 
     @Autowired
     private MockMvc mvc;
+
+1.3. run test like:
+
+        RequestBuilder request = MockMvcRequestBuilders.get("/welcome")
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().string("welcome"))
+                .andReturn();
+        RequestBuilder request = MockMvcRequestBuilders.get("/welcome")
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().string("welcome"))
+                .andReturn();
+
+2. MVC USES INJECTED BEANS
+
+2.1. in addition to 1.1. - 1.3. use @MockBean to replicate inserted beans.
+
 
 
