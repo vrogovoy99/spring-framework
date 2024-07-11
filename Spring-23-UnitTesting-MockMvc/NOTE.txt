@@ -29,5 +29,53 @@
 
 2.1. in addition to 1.1. - 1.3. use @MockBean to replicate inserted beans.
 
+3. use proc below to convert object into JSON
 
+  private static String toJsonString(final Object obj) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+4. use proc below for KeyCloak to get token as a string:
+
+private static String getKeyCloakToken() {
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("grant_type", "password");
+        map.add("client_id", "ticketing-app");
+        map.add("client_secret", "6sOJLsuimxvZvvwgrCBCgcDCEY9cVYno");
+        map.add("username", "mike1");
+        map.add("password", "abc1");
+        map.add("scope", "openid");
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
+
+        System.out.println("DEBUG: pre Keycloak call");
+
+        ResponseEntity<ResponseDTO> response =
+                restTemplate.exchange("http://localhost:8080/auth/realms/cydeo-dev/protocol/openid-connect/token",
+                        HttpMethod.POST,
+                        entity,
+                        ResponseDTO.class);
+
+        System.out.println("DEBUG: post Keycloak call");
+
+        if (response.getBody() != null) {
+            return response.getBody().getAccess_token();
+        }
+
+        return "";
+
+    }
 
