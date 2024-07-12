@@ -1,0 +1,36 @@
+Consume currency in Address from https://restcountries.com/v3.1/name/deutschland
+
+1. Add dependency
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+2. add @EnableFeignClients in runner class with import org.springframework.cloud.openfeign.EnableFeignClients;
+
+3. Create client package, CountryClient.class
+
+4. get API JSON generated classes from https://www.jsonschema2pojo.org/ and put then in com.cydeo.dto.country
+
+5. Dependency Inject CountryClient in AddressServiceImpl class
+
+6. Add String currency in AddressDTO class to be populated in AddressServiceImpl after address retrieved from database
+
+    addressDTO.setCurrency(getCurrencyApi(addressDTO.getCountry()));
+
+7. Add API call in AddressServiceImpl to enrich address data
+
+    private String getCurrencyApi(String country) {
+
+        // call countryClient.getCountryInfo API, pass country, retrieve JSON array of countries converted to list of CountryResponse
+        List<CountryResponse> countryInfo = countryClient.getCountryInfo(country);
+
+        if (countryInfo==null) { return null; }
+
+        return countryInfo.get(0).getCurrencies().getEur().getName();
+    }
+
+8. To avoid creation of JSON classes use  Map<String,Object> instead of CountryResponse class
+
+

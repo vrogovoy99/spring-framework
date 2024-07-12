@@ -23,6 +23,7 @@ public class AddressDTO {
     private String city;
     private String postalCode;
     private String flag;
+    private String currency;
 
     private AddressType addressType;
     private Integer currentTemperature;
