@@ -41,7 +41,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public TeacherDTO findByUsername(String username) {
         Teacher foundTeacher = teacherRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Teacher not found!"));
+                .orElseThrow(() -> new NotFoundException("Teacher " + username + " not found!"));
         return mapperUtil.convert(foundTeacher, new TeacherDTO());
     }
 
@@ -52,6 +52,10 @@ public class TeacherServiceImpl implements TeacherService {
 
         if (foundTeacher.isPresent()) {
             throw new AlreadyExistsException("Teacher already exists!");
+        }
+
+        if (teacherRepository.existsByEmail(teacherDTO.getEmail())){
+            throw new AlreadyExistsException("Teacher with email " + teacherDTO.getEmail() + " already exists!");
         }
 
         addressRepository.findByAddressNo(teacherDTO.getAddressNo())
