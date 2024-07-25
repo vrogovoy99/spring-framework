@@ -1,0 +1,351 @@
+__________________________________________________________________________
+AWS Amazon Web Services
+    - EC2: Elastic Compute Cloud - Server
+    - RDS: Relational Database Service -  Database
+    - ECR: Elastic Container Registry - post docker
+
+    - Manlual deployment to EC2
+
+Docker
+    - Create an image
+    - Push an image to a repository
+    - Pull an image
+    - Run image in a container
+    - Manual deployment to EC2 with Docker
+
+CircleCI
+    - CircleCI setup
+    - Automated deployment
+
+----------------------------------------------------------------------
+
+    AWS
+
+__________________________________________________________________________
+
+
+1. Create EC2
+1.1. go to aws.com > *create account VR/InfoWar3! > Sign in to the Console
+1.2. in console > search for ec2 > Launch instance
+        > Name: fake-user-app > ubuntu
+        > Key pair > Create new key pair > name: fake-user-app-key > click Create key pair
+        > click on Launch Instance > Instances
+            > select instance and click Connect > click Connect - will open terminal window.
+            > *create fake-user-app for the application
+
+2. Create JAR file
+2.1. InteliJ >Terminal> mvn package (Ctrl + Enter to run IDE feature)-> will generate jar and store it in target folder
+    mvn install -DskipTests -> builds jar without testing app
+Alternative:
+    click on Maven Icon (right top InteliJ) > M(app-name) > Lifecycle > package (or install) / clean to remove target folder
+
+3. upload JAR to EC2
+3.1. open terminal and go to C:\Users\Human\Downloads (EC2 fake-user-app-key.pem is in downloads folder)
+3.2. copy command from EC2 > Instances > select app and click Connect > SSH client > item 3. Run this command
+    Open Git Bash > cd Downl* > chmod 400 fake-user-app-key.pem
+3.3. run the upload command from download (where pem file is) using GitBash
+
+    scp -i "[key.pem]" [jar location] ubuntu@[EC2 server]:[target destination]
+
+        [key.pem] - fake-user-app-key.pem in Downloads folder
+        [jar location] - InteliJ > Project > target > .jar > Copy Path > Absolute
+        [EC2 server] 3.2. step 4 - Public DNS: ec2-3-135-62-25.us-east-2.compute.amazonaws.com
+        [target destination] : /home/ubuntu/fake-user-app
+
+    scp -i "fake-user-app-key.pem" /c/Users/Human/IdeaProjects/spring/fake-user-app/fake-user-app-vr/target/fake-user-app-0.0.1-SNAPSHOT.jar ubuntu@ec2-3-135-62-25.us-east-2.compute.amazonaws.com:/home/ubuntu/fake-user-app
+    scp -i "fake-user-app-key.pem" C:\Users\Human\IdeaProjects\spring\fake-user-app\fake-user-app-vr\target\fake-user-app-0.0.2-WITHDB.jar ubuntu@ec2-54-166-15-176.compute-1.amazonaws.com:/home/ubuntu/fake-user-app
+
+3.4. go to aws terminal (Instances / connect / EC2 Instance Connect / Connect)
+    confirm that file was uploaded to fake-user-app folder.
+
+4. Deploy and run application on aws server
+4.1. on the first run(*) install java:
+    sudo apt update                                 - (*)to install the packages
+    sudo apt install default-jre                    - (*)install java run environment
+4.2. on the first run enable port 8080
+4.2.1. aws console > instances > select instance > security tab > click on Security Groups link
+4.2.2. click on Edit inbound rules > Add Rule > Port range: 8080 > Source: Anywhere-IPv4 (0.0.0.0/0)> Save rules
+
+4.3. install application
+    java -jar fake-user-app-0.0.1-SNAPSHOT.jar      - install my application in EC2 console
+    you should be able to access Public IP:8080 via browser
+
+4.4. run application on background using nohup
+    nohup java -jar fake-user-app-0.0.1-SNAPSHOT.jar
+    NOTE: logs will be written in app directory (fake-user-app) in nohup.out file and can be reached via aws terminal.
+    nohup execution control commands:
+        lsof -i tcp:8080            - list jobs that run on tcp:8080 port displays PID
+        kill -9 [PID]               - stops application with given PID
+
+5. Create RDS database and connect to it from application.
+5.1. in aws search for RDS (Relational Database Service) > DB Instances > Create Database
+        -   Standard create
+        -   PostgreSQL
+        -   Free tier
+        -   DB instance identifier: fake-user-app
+        -   Master username:   postgres
+        -   Password:   Cydeo123.
+        -   Additional configuration
+            -   Initial database name: fake_user_app
+        -   Click create
+
+5.2. Configure database connection
+5.2.1. on RDS portal > Databases > click on database name
+5.2.2. Endpoint & port
+    copy Endpoint and paste it in application.configuration spring.datasource.url replacing localhost:
+        spring.datasource.url=jdbc:postgresql://fake-user-app.ctkkcki2gb3i.us-east-2.rds.amazonaws.com:5432/school-lab
+    make sure that the port in applicaiotn.configuration file is the same as in RDS portal 5432 (default)
+    replace database name in spring.datasource.url with DB name: fake_user_app (can be found in RDS > database > Configuration tab)
+5.2.3. Configure access to database from EC2
+    RDS portal > Databases > click on your database name > Connected compute resources section > Set up EC2 connection
+    -   select your app EC2 > Continue > Set up
+
+6. Redeploy application
+6.1. delete jar file on EC2 via terminal
+6.2. InteliJ terminal (use Ctrl+Enter):
+        mvn clean
+        mvn install -DskipTests      -   not lsto run tests, since app is configured to run on server only
+6.3. copy jar to EC2 repeating step 3.3.
+     scp -i "fake-user-app-key.pem" /c/Users/Human/IdeaProjects/spring/fake-user-app/fake-user-app-vr/target/fake-user-app-0.0.1-SNAPSHOT.jar ubuntu@ec2-3-135-62-25.us-east-2.compute.amazonaws.com:/home/ubuntu/fake-user-app
+6.4. run application on EC2 server terminal: java -jar fake-user-app-0.0.1-SNAPSHOT.jar
+
+__________________________________________________________________________
+
+    DOCKER
+
+__________________________________________________________________________
+https://hub.docker.com/
+vrogovoy99/HelloDocker
+                                Download and install Docker from https://www.docker.com/
+a. https://hub.docker.com/      - library of docker images and search for hello-world
+                                in cmd window while docker app is running
+b. docker pull hello-world      - download image
+   docker pull hello-world:linux - linux is a tag/version of the code
+c. docker run hello-world       - run image
+d. docker image ls              - list downloaded images
+   docker images                - list downloaded images
+e. docker rmi [image id]        - delete image / image id from docker images
+f. docker ps -a                 - list containers
+g. docker logs [container id]   - container id can be found in list of containers / contained id can be partial, like 9 instead of 923739813498
+h. docker rm [container id]     - delete container
+   docker rm -f a [container id]- force remove container (while it's running)
+i. docker stop [container id]   - stop execution of the container
+j. docker volume ls             - list registered volumes
+
+1. Create Docker package
+1.1. Create Dockerfile in application root:
+
+        FROM adoptopenjdk/openjdk11:jre
+                adoptopenjdk    - package creator
+                openjdk11       - image name
+                openjdk:17.0.1
+                jre             - tag (we need only runtime environment and it comes with OS)
+        FROM ubuntu             - add OS if it is not part of other included packages
+        WORKDIR usr/app         - creates usr/app folder and cd into it
+        COPY target/fake-user-app-0.0.1-SNAPSHOT.jar fake-user-app-0.0.1-SNAPSHOT.jar
+                target          - target folder, since dockerfile is in app root
+                fake-user-app-0.0.1-SNAPSHOT.jar - compiled app / destination file name
+        ENTRYPOINT ["java", "-jar", "fake-user-app-0.0.1-SNAPSHOT.jar"] - run command up on container initialization
+        -additional -
+        ADD target/fake-user-app-0.0.1-SNAPSHOT.jar fake-user-app-0.0.1-SNAPSHOT.jar
+            works like COPY, but can copy a link like:  ADD github.com/.../fake-user-app-0.0.1-SNAPSHOT.jar fake-user-app-0.0.1-SNAPSHOT.jar
+        RUN echo helloworld
+            runs command before container is created
+            runs outside the container
+            can be used ti install additional software: RUN apt-get install curl
+        CMD echo helloworld
+            similar to RUN but
+            runs command after container is created
+            can have only one CMD in dockerfile
+                CMD can be used to override ENTRYPOINT like:
+                    ENTRYPOINT ["java", "-jar", CMD]
+                    CMD "fake-user-app-0.0.1-SNAPSHOT.jar"
+                and CMD can be overwritten by operator
+        ENV VARIABLE=VALUE  - pass environment variables to container
+        VOLUME "/somepath"  - host server path that will be retained after container destroyed and can be reused by other containers
+
+
+1.2. Build local Docker Image
+1.2.1. cd to root application (or use InteliJ terminal
+1.2.2. docker build -t fake-user-app:latest .
+            fake-user-app       - image name
+            latest              - image tag
+            .                   - location of dockerfile (. stands for root)
+2. Publish Docker Image on DockerHub
+2.1. Login to DockerHub
+2.1.1. Via website: https://hub.docker.com/
+2.1.2. Via terminal:
+                docker login --username vrogovoy99 --password HelloDocker
+                docker login --username vrogovoy99 --password-stdin
+                cat mypassword.txt | docker login --username vrogovoy99 --password-stdin
+                docker logout
+2.2. Create image repository on DockerHub
+
+        https://hub.docker.com/ > Create repository > give Repository name, short description > Create
+            image repository vrogovoy99/fake-user-app crated
+
+2.3. Rename local image to have same name as DockerHub Image
+        docker tag fake-user-app:latest vrogovoy99/fake-user-app:v1
+            fake-user-app:latest            - local image name tag
+            vrogovoy99/fake-user-app:v1     - to be renamed to match DockerHub image
+
+       ~temp: docker build -t vrogovoy99/fake-user-app:WITHDB .
+
+
+2.4. Push created image to DockerHub. The command is generated on DockerHub web site > repositories
+        docker push vrogovoy99/fake-user-app:WITHDB
+
+2.5. alternative way to build image directly from GitHub AWS server
+
+NOTE jar file has to be explicitly included in GIT and pushed to the server!
+
+2.5.1. GitHub PUBLIC repository.
+2.5.1.1. Generate jar file in InteliJ, commit it to Git
+2.5.1.2. In AWS terminal run
+
+        sudo docker build -t vrogovoy99/fake-user-app:from-git https://github.com/vrogovoy99/fake-user-app-vr.git#3.docker
+             vrogovoy99/fake-user-app:from-git                      -   Image and tag name to be created
+             https://github.com/vrogovoy99/fake-user-app-vr.git     -   Git repository path
+             3.docker                                               -   Git branch
+        docker run -p 8080:8080 vrogovoy99/fake-user-app:from-git
+
+2.5.2. GitHub PRIVATE repository.
+2.5.2.1. Generate jar file in InteliJ, commit it to Git
+2.5.2.2 Generate Git token
+    go to GitHub.com > user profile (top right icon) > settings > developer settings >
+    personal access tokens > tokens (classic) >
+    Generate new token > Generate new token (classic):
+        Note (give token a name):   docker-demo-token
+        Expiration:                 7 days
+        repo:                       on
+        Generate token
+    Copy generated token (it will be displayed only once): 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
+    Additionally: you can click on Configure SSO, select organization and Authorize that organization to use new token
+
+
+2.5.2.3. In AWS terminal run
+
+        sudo docker build -t vrogovoy99/fake-user-app:from-git https://[Git token@]github.com/vrogovoy99/fake-user-app-vr.git#3.docker
+        sudo docker build -t vrogovoy99/fake-user-app:from-git-secure https://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@github.com/vrogovoy99/fake-user-app-vr.git#3.docker
+
+3. Daploy Docker image on EC2
+3.1. login to EC2 terminal
+3.2. make sure nothing is running on port 8080: lsof -i tcp:8080
+3.3. *Install Docker (one time install)
+3.3.1 go to https://docs.docker.com/engine/install/ubuntu/ and copy setup Docker code
+            # Add Docker's official GPG key:....
+        run that code in EC2 terminal
+3.3.2. On the same Docker page  and copy Install the Docker package codeRe
+            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        run that code in EC2 terminal
+3.3.3. to test successful installation run
+            sudo docker run hello-world
+
+3.4. deploy docker image using command line
+        sudo docker run --name fake-user-app-withdb -p 8080:8080 vrogovoy99/fake-user-app:WITHDB
+            -p 8081:8080    - connect container port 8080 to virtual machine port 8081
+        (to get needed permissions run : sudo su )
+        sudo docker pull vrogovoy99/fake-user-app:v1
+4. Docker functions
+4.1. Environment variables
+    Can be referred to from Java app properties or yaml files ad ${DB_URL}
+4.1.1. Create environment variable in unix (/bin/zsh):
+
+        > echo $SHELL
+        /bin/zsh
+        > echo "export DB_URL=jdbc:postgresql://fake-user-app.ctkkcki2gb3i.us-east-2.rds.amazonaws.com:5432/fake_user_app" >> ~ /.profile source ~/.zprofile
+
+4.1.2. Create environment variable in unix (/bin.bash):
+
+        > echo $SHELL
+        /bin/bash
+        > echo "export DB_URL=jdbc:postgresql://fake-user-app.cpwaw00267mh.us-east-1.rds.amazonaws.com:5432/fake_user_app" >> ~ /.bash_profile source ~/.bash_profile
+        OR
+        > echo "export DB_URL=jdbc:postgresql://fake-user-app.cpwaw00267mh.us-east-1.rds.amazonaws.com:5432/fake_user_app" >> ~ /.profile source ~/.profile
+
+4.1.3. Create environment variable in windows:
+
+    Search for Edit System Environment variables > System Properties window / Advanced tab / click on Environment Variables
+    System section > New:
+        name:   DB_URL
+        value:  jdbc:postgresql://localhost:5432/fake_user_app
+        name:   DB_USERNAME
+        value:  postgres
+        name:   DB_PASSWORD
+        value:  admin
+4.1.4. Replace static values in application.properties file with environment variables
+
+        spring.datasource.url=${DB_URL}
+        spring.datasource.username=${DB_USERNAME}
+        spring.datasource.password=${DB_PASSWORD}
+
+4.1.5. to pass environment variables to container use -e and add container to network:
+
+    docker run --name fake-user-app -e DB_URL=jdbc:postgresql://my-postgres-db:5432/fake_user_app -e DB_USERNAME=postgres -e DB_PASSWORD=admin --network my-network -p 8080:8080 vrogovoy99/fake-user-app:withdb2
+        -e                      - environment variables
+        my-postgres-db          - container that hosts fake_user_app (created in section 4.2)
+        --network my-network    - add new container to the network with database container ( created in section 4.2)
+
+4.2. Network
+
+        Container my-app        container my-postgres-db
+                    network my-network
+
+4.2.1. Create network
+
+        docker network create -d bridge my-network
+            -d      - drivers
+                        bridge  - connect containers on the same host
+                        overlay - connect containers on different hosts
+                        host....
+
+4.2.2. Create database container and add it to the network
+
+        docker run --name my-postgres-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=fake_user_app --network my-network postgres
+            --name my-postgres-db           - container name
+            -e POSTGRES_USER=postgres       - environment variable
+            -e POSTGRES_PASSWORD=admin      - environment variable
+            -e POSTGRES_DB=fake_user_app    - environment variable
+            --network my-network            - add container to network
+            postgres                        - image to run
+
+4.3. Volume - replicate container volume on host server / created at the time of image run
+
+    docker run --name my-postgres-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=fake_user_app --network my-network -v my-data:/var/lib/postgresql/data postgres
+        -v my-data:/var/lib/postgresql/data     - create a volume my-data in docker and map it to data dir in container.
+
+4.4. Docker Compose file. Commands to create network, create Postgresql and app containers are stored in docker-compose.yaml file
+4.4.1. Since app start is dependent on SQL to be running, app configuration should have dependency added in docker-compose.yaml:
+
+            depends_on:
+              my-postgres-db-2:
+                condition: service_started
+
+4.4.2. In case SQL stops, we want to restart it automatically. Ass restart into docker-compose.yaml:
+
+             restart: always
+
+4.4.3. Run docker-compose.yaml
+
+        docker compose up
+
+        to stop it - Cntl_C OR
+
+        docker compose down
+
+5. move sensitive info from config.yml to CircleCi > Project Settings > Environment Variables
+
+    ECR_SVR = 637423465023.dkr.ecr.us-east-1.amazonaws.com
+    EC2_SVR = ec2-54-166-15-176.compute-1.amazonaws.com
+    EC2_USR = ubuntu
+
+
+
+
+Replace master with branch:
+    git checkout master
+    git pull
+    git checkout seotweaks
+    git merge -s ours master
+    git checkout master
+    git merge seotweaks

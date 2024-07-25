@@ -1,0 +1,195 @@
+1. Setup CirleCi (.cirleci/config.yml)
+1.1. Create .circleci/config.yml. In file:
+1.2. Add jobs
+
+        version: 2
+        jobs:
+          build:
+            steps:
+          test:
+            steps:
+          docker-image-create-and-push:
+            steps:
+          deploy:
+            steps:
+
+1.3. Add workflows
+
+        workflows:
+          version: 2
+          build_test_deploy:
+            jobs:
+              - build
+              - test:
+                  requires:
+                    - build
+              - docker-image-create-and-push:
+                  requires:
+                    - test
+              - deploy:
+                  requires:
+                    - docker-image-create-and-push
+
+1.4. Build
+
+        build:
+                                ### use docker with jdk image to build my app.
+            docker:
+              - image: circleci/openjdk:11-jdk
+                                ### execute commands in below folder
+            working_directory: ~/fake-user-app
+            steps:
+              - checkout
+              - run:
+                  name: Create a Directory
+                                ### this step creates working_directory
+                                ### -p means that if directory already exists then do not give error
+                  command: mkdir -p ~/fake-user-app
+                                ### reuse libraries that were prior downloaded
+              - restore_cache:
+                  keys:
+                    - fake-user-app-dependencies-{{ checksum "pom.xml" }}
+              - run:
+                  name: Build (Create JAR File)
+                  command: mvn clean package -DskipTests
+                                ### preserver downloaded libraries for future builds
+              - save_cache:
+                  paths:
+                    - ~/.m2
+                  key: fake-user-app-dependencies-{{ checksum "pom.xml" }}
+                                ### save project working files in one location, so it can be reused by other servers (in case of multiple servers)
+              - persist_to_workspace:
+                  root: ~/fake-user-app
+                  paths:
+                    - .
+
+1.5. Test
+
+      test:
+                        ### use virtual machine with docker, maven, aws
+                        ### this is alternative to defining docker in build steps
+                        ###    docker:
+                        ###              - image: circleci/openjdk:11-jdk
+        machine: true
+                        ### reuse workspace defined in build step
+        working_directory: ~/fake-usefr-app
+        steps:
+          - attach_workspace:
+                        ### reuse workspace defined in build step
+              at: ~/fake-user-app
+                        ### create Postgres database to run the test
+          - run:
+              name: Docker Container That Runs Postgresql In It (Fake DB)
+              command: docker run --name test-db -d -p 5432:5432 -e POSTGRES_DB=fake-user-app -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=Cydeo123. postgres:latest
+                        ### run the test command in multiple lines
+                        ### NOTE -d is critical - it de-touches logs of database that runs forever and allows test to move to next step.
+          - run:
+              name: Run Integration Tests and Unit Tests
+              command: |
+                mvn test -Dskip.unit.tests=false -Dskip.integration.tests=false \
+                -Dspring.datasource.url=jdbc:postgresql://localhost:5432/fake-user-app \
+                -Dspring.datasource.username=postgres \
+                -Dspring.datasource.password=Cydeo123.
+
+
+1.6. Docker Image Create
+
+1.6.1. Create ECR (Elastic Container Registry - instead of DockerHub)
+
+    aws.com > search for ECR > Create a repository / Get started >
+        Repository name: fake-user-app
+        Create repository
+    on ECR portal > select new ECR and click View push command > copy login command
+
+    in step 4 copy instance id: 637423465023.dkr.ecr.us-east-1.amazonaws.com
+
+1.6.2. Download AWS Security Credentials
+
+    aws.com > ECR portal > top-left clikc on username > Security Credentials
+    Access Keys section > Create access key > download access.csv file.
+
+1.6.3. build image and deploy it
+
+      docker-image-create-and-push:
+        machine: true
+        working_directory: ~/fake-user-app
+        steps:
+          - attach_workspace:
+              at: ~/fake-user-app
+          - run:
+              name: Create Docker Image
+              command: docker build -t 637423465023.dkr.ecr.us-east-1.amazonaws.com/fake-user-app/fake-user-app:latest .
+          - run:
+              name: Login to Image Repo (AWS ECR)
+                        ### paste login command from 4.1.
+              command: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 637423465023.dkr.ecr.us-east-1.amazonaws.com/fake-user-app
+          - run:
+              name: Push the image to ECR
+              command: docker push 637423465023.dkr.ecr.us-east-1.amazonaws.com/fake-user-app/fake-user-app:latest
+
+1.7. Deploy
+
+      deploy:
+        machine: true
+        steps:
+          - run:
+              name: Connect to EC2 Server and run the image
+              ### from >>ENDSSH to ENDSSH will be executed on remote server.
+              command: |
+             ssh -o "StrictHostKeyChecking=no" $SERVER_USERNAME@$SERVER_HOSTNAME <<'ENDSSH'
+             /bin/bash ~/fake-user-app/deploy_image.sh
+             ENDSSH
+
+2. Create deploy script deploy_image.sh and env_file.txt
+
+2.1. In order to run aws commands on EC2 server we need to install awscli. in EC2 terminal window run (will work only id Docker already installed):
+
+        sudo apt install awscli (this command failed. used instead: sudo snap install aws-cli --classic)
+
+            the reason for docker is ability of the above command to run: sudo apt-get update
+
+2.2. Grant ubuntu used su rights to run docker in script
+
+        sudo usermod -aG docker ubuntu
+
+2.3. Environment variables file env_file.txt
+
+        populate file with text below and place it in EC2/fake-user-app/env_file.txt
+        DB_URL=jdbc:postgresql://fake-user-app.cpwaw00267mh.us-east-1.rds.amazonaws.com:5432/fake_user_app
+        DB_USERNAME=postgres
+        DB_PASSWORD=Cydeo123.
+
+3. setup account in circleci.com
+
+    on portral > projects > create project > build test deploy > add GitHub > Authorize >
+    select project in git > follow instructions.....
+
+4. Set AWS ECR credentials in CircleCi
+
+    CircleCi portal > Projects > Project Settings > Environment Variables > Add Environment Variables
+    Get information from rootkey.csv that was downloaded during ECR setup
+    AWS_ACCESS_KEY_ID=AKIAZI2LGGI7YWLNPT5B
+    AWS_SECRET_ACCESS_KEY=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
+
+    From AWS > RDS > portal top-right > get server location and add CircleCi variable
+    AWS_DEFAULT_REGION=us-east-1
+
+5. Add EC2 SSH key to CircleCi to enable connection/deployment.
+
+    open fake-user-app-key.pem file in downloads (generated by EC2 during key-pair setup)
+
+    CircleCi project > project settings > SSH Keys > Add SSH Key >
+            Private Key box = paste content of fake-user-app-key.pem file
+            Hostname =  EC2 Public IPv4 DNS (ec2-54-166-15-176.compute-1.amazonaws.com)
+
+6. address deployment issue - setup EC2 access for ESR to get images
+
+        sudo su
+        cd fake-user-app
+        nano deploy_image.sh
+
+            #AWS command/s to set the security credentials
+            aws configure set aws_access_key_id AKIAZI2LGGI7YWLNPT5B
+            aws configure set aws_secret_access_key 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
+            aws configure set default.region us-east-1
+
