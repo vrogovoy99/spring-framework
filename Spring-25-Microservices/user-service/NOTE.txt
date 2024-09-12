@@ -1,0 +1,13 @@
+1. Add OpenFeign dependency
+
+1.1. add common property version for all cloud components by adding pom properties section:
+
+        <spring-cloud.version>2.2.6.RELEASE</spring-cloud.version>
+
+1.2. add Open Feign dependency using common property
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
