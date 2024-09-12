@@ -1,0 +1,19 @@
+server:
+  port: 9090
+
+keycloak:
+  realm: cydeo-dev
+  auth-server-url: http://localhost:8080/auth
+  ssl-required: none
+  resource: ticketing-app
+  credentials:
+    secret: kL61LtbhRQ4i8wKM6M0QDHpYEF7utx3K
+  use-resource-role-mappings: true
+  bearer-only: true
+
+master:
+  user:
+    username: admin
+    password: admin
+  realm: master
+  client: master-client

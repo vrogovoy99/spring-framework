@@ -28,4 +28,9 @@
 4.4.3. client: ticketing-app (in cydeo-dev realm) Enable client authentication during the creation.
 4.4.4. open ticketing-app client details > Credentials > copy Client secret > paste it in all applications yaml files.
 
+4.4. to upload users into keycloak add keycloak-legacy-user-loader app,
+4.4.1. update application yml file to connect to our running keycloak app
+4.4.2. Add roles in keycloak: cydeo-dev realm > clients > ticketing-app > roles : create roles Admin, Manager, Employee
+4.4.3. after completing setup - run keycloak-legacy-user-loader app to load data.sql  users into keycloak database.
+
 
