@@ -7,14 +7,14 @@ spring:
       ddl-auto: create
     show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/micro-user
+    url: jdbc:postgresql://localhost:5432/micro-project
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
     initialization-mode: always
 
 server:
-  port: 8081
+  port: 8082
 
 keycloak:
   realm: cydeo-dev
@@ -25,7 +25,6 @@ keycloak:
     secret: kL61LtbhRQ4i8wKM6M0QDHpYEF7utx3K
   use-resource-role-mappings: true
   bearer-only: true
-
 master:
   user:
     username: admin

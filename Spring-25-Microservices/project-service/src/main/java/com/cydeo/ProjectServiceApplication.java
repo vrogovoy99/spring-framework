@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableFeignClients
-public class UserServiceApplication {
+public class ProjectServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
+
+        SpringApplication.run(ProjectServiceApplication.class, args);
     }
 
     @Bean

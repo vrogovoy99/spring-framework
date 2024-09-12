@@ -1,0 +1,31 @@
+1. Add OpenFeign dependency
+
+1.1. add common property version for all cloud components by adding pom properties section:
+
+        <spring-cloud.version>2.2.6.RELEASE</spring-cloud.version>
+
+1.2. add Open Feign dependency using common property
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+
+2. Enable Feign services by adding @EnableFeignClients annotation in runner classes
+
+3. Add Feign client api call in clint package
+
+4. Keycloak
+
+4.1. create docker-compose.yaml to download and deploy keyclock container.
+4.2. start docker locally
+4.3. Run at the file location: docker compose up
+    (the docker will download keylock and run it. it can be accessed at localhost:8080)
+4.4. In Keyclock portal create:
+4.4.1. client master-client (in master realm)
+4.4.2. realm: cydeo-dev
+4.4.3. client: ticketing-app (in cydeo-dev realm) Enable client authentication during the creation.
+4.4.4. open ticketing-app client details > Credentials > copy Client secret > paste it in all applications yaml files.
+
+

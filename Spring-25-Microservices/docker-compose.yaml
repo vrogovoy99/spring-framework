@@ -1,0 +1,47 @@
+#docker run
+#--name my-postgres-db
+#-e POSTGRES_USER=postgres
+#-e POSTGRES_PASSWORD=admin
+#-e POSTGRES_DB=fake_user_app
+#--network my-network
+#-v my-data:/var/lib/postgresql/data
+#postgres
+
+version: '3.8'
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+  keycloak:
+    image: quay.io/keycloak/keycloak:legacy
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      DB_SCHEMA: public
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+
+#docker run
+#--name fake-user-app
+#  -e DB_URL=jdbc:postgresql://my-postgres-db:5432/fake_user_app
+#  -e DB_USERNAME=postgres
+#  -e DB_PASSWORD=admin
+#  --network my-network
+#  cundullaht/fake-user-app:v4
