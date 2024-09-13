@@ -33,4 +33,24 @@
 4.4.2. Add roles in keycloak: cydeo-dev realm > clients > ticketing-app > roles : create roles Admin, Manager, Employee
 4.4.3. after completing setup - run keycloak-legacy-user-loader app to load data.sql  users into keycloak database.
 
+5. run project-service and test it in POSTMAN
+5.1. to test api open POSTMAN
+5.1.1. URL: localhost:8082/api/v1/project/count/manager/johnreese@email.com
+5.1.2. Authorization > Type - OAuth 2.0
+5.1.3. Configure New Token > Grant type Password Credentials
+5.1.4. Access Token URL: http://localhost:8080/auth/realms/cydeo-dev/protocol/openid-connect/token
+        (from Keycloak > Cydeo-dev realm > Realm Settings > Endpoints > OpenID Endpoint > from configuration copy token-enpoint URL)
+5.1.5. Client ID: ticketing-app
+5.1.6. Client Secret : Keycloak > Client > ticketing-app > Credentials > Client Secret
+5.1.7. Populate Username / password (Abc1) note - API allows only managers to access call, so we use admin haroldfinch@email.com
+5.1.8. Scope: openid
+5.1.9. Header Prefix: Bearer
+5.1.10. Click on Get New Access Token / Add Token
+
+
+******************************* ERRORS *******************************
+java: cannot find symbol
+     Lombok processor is not working properly. Could you go to settings -> build, execution, deployment -> compiler and for the input section that says "Shared build process VM options" add this text below, and then click on apply and ok. Then you can try to run the project again
+    -Djps.track.ap.dependencies=false
+
 
