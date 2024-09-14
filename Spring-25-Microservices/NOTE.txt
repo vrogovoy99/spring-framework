@@ -51,6 +51,13 @@
 6.1. @FeignClient in com/cydeo/client/ProjectClient.java interface will create a bean
 6.2. We insert reference to this bean in com/cydeo/service/impl/UserServiceImpl.java and use its API call function in checkManagerConnections method.
 
+7. API call security > passing a authorization token
+7.1. com/cydeo/service/impl/KeycloakServiceImpl.java and KeycloakService interface add getAccessToken method to extract and return authorization string from request security context
+7.2. add @RequestHeader(value = "Authorization") in com/cydeo/client/ProjectClient.java and TaskClient API calls to pass authorization token
+7.3. in com/cydeo/service/impl/UserServiceImpl.java where the API are called add Autorizaton extract method and pass it to API call
+
+
+
 
 
 ******************************* ERRORS *******************************

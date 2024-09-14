@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
     private void checkManagerConnections(String username) {
 
         Integer projectCount = 0;
-        ResponseEntity<ProjectResponse> projectResponse = projectClient.getNonCompletedByAssignedManager(username);
+        ResponseEntity<ProjectResponse> projectResponse = projectClient.getNonCompletedByAssignedManager(keycloakService.getAccessToken(), username);
         if (projectResponse.getBody().isSuccess()) {
             projectCount = projectResponse.getBody().getData();
         } else {
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
     private void checkEmployeeConnections(String username) {
 
         Integer taskCount = 0;
-        ResponseEntity<TaskResponse> taskResponse = taskClient.getNonCompletedByAssignedEmployee(username);
+        ResponseEntity<TaskResponse> taskResponse = taskClient.getNonCompletedByAssignedEmployee(keycloakService.getAccessToken(), username);
         if (taskResponse.getBody().isSuccess()) {
             taskCount = taskResponse.getBody().getData();
         } else {
