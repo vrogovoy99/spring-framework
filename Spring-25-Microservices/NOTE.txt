@@ -47,6 +47,11 @@
 5.1.9. Header Prefix: Bearer
 5.1.10. Click on Get New Access Token / Add Token
 
+6. Use API call in the code.
+6.1. @FeignClient in com/cydeo/client/ProjectClient.java interface will create a bean
+6.2. We insert reference to this bean in com/cydeo/service/impl/UserServiceImpl.java and use its API call function in checkManagerConnections method.
+
+
 
 ******************************* ERRORS *******************************
 java: cannot find symbol

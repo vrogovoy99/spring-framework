@@ -1,14 +1,18 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.ProjectClient;
+import com.cydeo.client.TaskClient;
+import com.cydeo.dto.ProjectResponse;
+import com.cydeo.dto.TaskResponse;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.User;
-import com.cydeo.exception.UserAlreadyExistsException;
-import com.cydeo.exception.UserNotFoundException;
+import com.cydeo.exception.*;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.KeycloakService;
 import com.cydeo.service.UserService;
 import com.cydeo.util.MapperUtil;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +25,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MapperUtil mapperUtil;
     private final KeycloakService keycloakService;
+    private final ProjectClient projectClient;
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, KeycloakService keycloakService) {
+    private final TaskClient taskClient;
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, KeycloakService keycloakService, ProjectClient projectClient, TaskClient taskClient) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.keycloakService = keycloakService;
+        this.projectClient = projectClient;
+        this.taskClient = taskClient;
     }
 
     @Override
@@ -130,14 +138,32 @@ public class UserServiceImpl implements UserService {
 
     private void checkManagerConnections(String username) {
 
-        //TODO Get the needed information from project-service
+        Integer projectCount = 0;
+        ResponseEntity<ProjectResponse> projectResponse = projectClient.getNonCompletedByAssignedManager(username);
+        if (projectResponse.getBody().isSuccess()) {
+            projectCount = projectResponse.getBody().getData();
+        } else {
+            throw new ProjectCountNotRetrievedException("Can not retrieve number of projects for manager " + username);
+        }
 
+        if(projectCount > 0){
+            throw new UserCanNotBeDeletedException("User ${username} can not be deleted because of " + projectCount + " open projects.");
+        }
     }
 
     private void checkEmployeeConnections(String username) {
 
-        //TODO Get the needed information from task-service
+        Integer taskCount = 0;
+        ResponseEntity<TaskResponse> taskResponse = taskClient.getNonCompletedByAssignedEmployee(username);
+        if (taskResponse.getBody().isSuccess()) {
+            taskCount = taskResponse.getBody().getData();
+        } else {
+            throw new TaskCountNotRetrievedException("Can not retrieve number of task for employee " + username);
+        }
 
+        if(taskCount > 0){
+            throw new UserCanNotBeDeletedException("User ${username} can not be deleted because of " + taskCount + " open tasks.");
+        }
     }
 
     //TODO Extract the authorization token from the original request and add it to the request sent to next microservice
