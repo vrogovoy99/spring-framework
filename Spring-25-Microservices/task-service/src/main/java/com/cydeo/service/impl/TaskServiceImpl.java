@@ -1,6 +1,11 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.ProjectClient;
+import com.cydeo.client.UserClient;
+import com.cydeo.dto.ProjectResponse;
 import com.cydeo.dto.TaskDTO;
+import com.cydeo.dto.UserResponse;
+import com.cydeo.dto.wrapper.ResponseWrapper;
 import com.cydeo.entity.Task;
 import com.cydeo.enums.Status;
 import com.cydeo.exception.*;
@@ -8,6 +13,7 @@ import com.cydeo.repository.TaskRepository;
 import com.cydeo.service.KeycloakService;
 import com.cydeo.service.TaskService;
 import com.cydeo.util.MapperUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +27,15 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final MapperUtil mapperUtil;
     private final KeycloakService keycloakService;
+    private final ProjectClient projectClient;
+    private final UserClient userClient;
 
-    public TaskServiceImpl(TaskRepository taskRepository, MapperUtil mapperUtil, KeycloakService keycloakService) {
+    public TaskServiceImpl(TaskRepository taskRepository, MapperUtil mapperUtil, KeycloakService keycloakService, ProjectClient projectClient, UserClient userClient) {
         this.taskRepository = taskRepository;
         this.mapperUtil = mapperUtil;
         this.keycloakService = keycloakService;
+        this.projectClient = projectClient;
+        this.userClient = userClient;
     }
 
     @Override
@@ -199,12 +209,36 @@ public class TaskServiceImpl implements TaskService {
     private void checkProjectExists(String projectCode) {
 
         //TODO Check if project exists or not by asking about it to project-service
+        ResponseEntity<ProjectResponse> project =  projectClient.checkByProjectCode(projectCode);
+
+        if(!project.getBody().isSuccess()){
+            throw new ProjectCheckFailedException("Project " + projectCode + " check failed");
+        }
+
+        if(!project.getBody().getData().equals(true)){
+            throw new ProjectNotFoundException("Project " + projectCode + " not found");
+        }
 
     }
 
     private void checkEmployeeExists(String assignedEmployee) {
 
         //TODO Check if employee exists or not by asking about it to user-service
+
+        ResponseEntity<UserResponse> responce =  userClient.checkByUserName(assignedEmployee);
+
+        if(!responce.getBody().isSuccess()){
+            throw new EmployeeCheckFailedException("Employee " + assignedEmployee + " check failed");
+        }
+
+        if(!responce.getBody().getData().equals(true)){
+            throw new EmployeeNotFoundException("Employee " + assignedEmployee + " not found");
+        }
+        // check if existing user is an employee using keycloak
+        if(!keycloakService.hasClientRole(assignedEmployee, "Employee")){
+            throw new UserNotEmployeeException("User " + assignedEmployee + " is not an employee");
+        }
+
 
     }
 
@@ -224,8 +258,16 @@ public class TaskServiceImpl implements TaskService {
 
     private void checkCreateAccessToTaskProject(String loggedInUserUsername, String projectCode) {
 
-        //TODO Check if logged in user has access to the project of the task to create tasks for that project
-        //     by asking about it to project-service
+        ResponseEntity<ProjectResponse> response = projectClient.getManagerByProjectCode(projectCode);
+
+        if(Objects.requireNonNull(response.getBody()).isSuccess()){
+            String projectManaer = (String) response.getBody().getData();
+            if(!projectManaer.equals(loggedInUserUsername)){
+                throw new ProjectAccessDeniedException(loggedInUserUsername + " is not " + projectCode + " project manager");
+            }
+        }else{
+            throw new ManagerNotRetrievedException("Manager not retrieved");
+        }
 
     }
 

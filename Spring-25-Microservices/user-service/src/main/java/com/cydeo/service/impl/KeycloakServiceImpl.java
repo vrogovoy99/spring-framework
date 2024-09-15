@@ -35,8 +35,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public String getAccessToken() {
         KeycloakAuthenticationToken keycloakAuthenticationToken = getAuthentication();
-        return "Bearer " + keycloakAuthenticationToken.getAccount()
-                .getKeycloakSecurityContext().getIdTokenString();
+        return "Bearer " + keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getTokenString();
     }
 
     private KeycloakAuthenticationToken getAuthentication(){

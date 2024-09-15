@@ -13,7 +13,6 @@ public interface TaskClient {
 
 
         @GetMapping("/api/v1/task/count/employee/{assignedEmployee}")
-        ResponseEntity<TaskResponse> getNonCompletedByAssignedEmployee(@RequestHeader(value = "Authorization") String authorizationHeader,
-                                                                       @PathVariable("assignedEmployee") String assignedEmployee);
+        ResponseEntity<TaskResponse> getNonCompletedByAssignedEmployee(@PathVariable("assignedEmployee") String assignedEmployee);
 
     }

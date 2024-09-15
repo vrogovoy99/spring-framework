@@ -1,19 +1,21 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.TaskClient;
 import com.cydeo.dto.ProjectDTO;
+import com.cydeo.dto.TaskResponse;
 import com.cydeo.entity.Project;
 import com.cydeo.enums.Status;
-import com.cydeo.exception.ProjectAccessDeniedException;
-import com.cydeo.exception.ProjectAlreadyExistsException;
-import com.cydeo.exception.ProjectIsCompletedException;
-import com.cydeo.exception.ProjectNotFoundException;
+import com.cydeo.exception.*;
 import com.cydeo.repository.ProjectRepository;
 import com.cydeo.service.KeycloakService;
 import com.cydeo.service.ProjectService;
 import com.cydeo.util.MapperUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,10 +26,13 @@ public class ProjectServiceImpl implements ProjectService {
     private final MapperUtil mapperUtil;
     private final KeycloakService keycloakService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, MapperUtil mapperUtil, KeycloakService keycloakService) {
+    private final TaskClient taskClient;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, MapperUtil mapperUtil, KeycloakService keycloakService, TaskClient taskClient) {
         this.projectRepository = projectRepository;
         this.mapperUtil = mapperUtil;
         this.keycloakService = keycloakService;
+        this.taskClient = taskClient;
     }
 
     @Override
@@ -198,21 +203,37 @@ public class ProjectServiceImpl implements ProjectService {
 
     private ProjectDTO retrieveProjectDetails(Project project) {
 
-        //TODO Retrieve the completed and non-completed task counts from task-service
+        ProjectDTO projectDTO = mapperUtil.convert(project, new ProjectDTO());
 
-        return new ProjectDTO();
+        ResponseEntity<TaskResponse> taskResponse = taskClient.getCountsByProject(projectDTO.getProjectCode());
+        if(taskResponse.getBody().isSuccess()){
+            Map<String, Integer> taskCounts = (HashMap<String, Integer>) taskResponse.getBody().getData();
+            Integer completedTaskCount = taskCounts.get("completedTaskCount");
+            Integer nonCompletedTaskCount = taskCounts.get("nonCompletedTaskCount");
 
+            projectDTO.setCompletedTaskCount(completedTaskCount);
+            projectDTO.setNonCompletedTaskCount(nonCompletedTaskCount);
+        }else{
+            throw new ProjectDetailsNotRetrievedException("Project details can not be retrieved.");
+        }
+
+        return projectDTO;
     }
 
     private void completeRelatedTasks(String projectCode) {
 
-        //TODO Send a request to task-service to complete all the tasks of a certain project
-
+        ResponseEntity<TaskResponse> taskResponse = taskClient.completeByProject(projectCode);
+        if(!taskResponse.getBody().isSuccess()){
+            throw new TasksCanNotBeCompletedException("Can not complete tasks");
+        }
     }
 
     private void deleteRelatedTasks(String projectCode) {
 
-        //TODO Send a request to task-service to delete all the tasks of a certain project
+        ResponseEntity<TaskResponse> taskResponse = taskClient.deleteByProject(projectCode);
+        if(!taskResponse.getBody().isSuccess()){
+            throw new TasksCanNotBeDeletedException("Can not delete tasks");
+        }
 
     }
 

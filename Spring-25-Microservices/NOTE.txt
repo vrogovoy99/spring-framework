@@ -55,7 +55,8 @@
 7.1. com/cydeo/service/impl/KeycloakServiceImpl.java and KeycloakService interface add getAccessToken method to extract and return authorization string from request security context
 7.2. add @RequestHeader(value = "Authorization") in com/cydeo/client/ProjectClient.java and TaskClient API calls to pass authorization token
 7.3. in com/cydeo/service/impl/UserServiceImpl.java where the API are called add Autorizaton extract method and pass it to API call
-
+7.*. To avoid above steps 7.2 and 7.3 and replicate code in case of every API call add custom RequestInterceptor com/cydeo/client/interceptor/FeignClientInterceptor.java
+    that will automatically add authentication token to every API call.
 
 
 
