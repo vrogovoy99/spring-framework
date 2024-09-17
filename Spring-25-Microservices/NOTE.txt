@@ -60,6 +60,7 @@
 
 8. EUREKA - Service Discovery registers microservice address.
 ******************** SERVER ********************
+NOTE: presented server changes did not work. look into pom.xml and application.properties in discovery-service to make Eureka work.
 8.1. Generate project in https://start.spring.io/:
     Project: Maven
     Language: Java
