@@ -10,9 +10,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain configure(ServerHttpSecurity httpSecurity){
+    public SecurityWebFilterChain configure(ServerHttpSecurity httpSecurity) {
 
-//        add all swagger related end points
         return httpSecurity
                 .authorizeExchange()
                 .pathMatchers("/actuator/**").permitAll()
@@ -25,5 +24,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/task-service/v3/**").permitAll()
                 .anyExchange().authenticated().and()
                 .oauth2ResourceServer().jwt().and().and().build();
+
     }
+
 }

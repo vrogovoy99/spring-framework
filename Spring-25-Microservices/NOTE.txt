@@ -299,9 +299,14 @@ NOTE: presented server changes did not work. look into pom.xml and application.p
                 .pathMatchers(HttpMethod.GET, "/project-service/v3/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/task-service/v3/**").permitAll()
 9.10. To see swagger API documentation go to http://localhost:8762/webjars/swagger-ui/index.html
-
-
-
+9.11. Enable Swagger UI to access Keycloak
+            http://localhost:8080/auth/ > cydeo-dev realm > Clients > ticketing-app :
+                Valid redirect URIs = http://localhost:8762/*
+                Web origins = http://localhost:8762
+            Save
+            After that you can login to keyclock from Swagger UI to acquire security tokens
+9.12. in *Controller.java classes add annotation:
+            @CrossOrigin(origins = "http://localhost:8762")
 
 ******************************* ERRORS *******************************
 java: cannot find symbol
